@@ -1,0 +1,7 @@
+'''Simple asnc HTML Server für .Net'''
+
+This is a simple Http server for .net. Currently it is just a tiny HttpListener wrapper.
+
+It is licenced under Apache 2 License.
+
+http://www.apache.org/licenses/
