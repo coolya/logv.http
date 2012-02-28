@@ -31,6 +31,12 @@ namespace SimpleHttpServer
 
         private void AddHandler(string prefix, HttpVerb verb, Action<HttpListenerRequest, HttpListenerResponse> act)
         {
+
+            string fulladress = prefix.EndsWith("/") 
+                ? _serverAdress + prefix : _serverAdress + prefix + "/";
+
+            _listener.Prefixes.Add(fulladress);
+
             if (!_handlerByPrefixAndVerb.ContainsKey(prefix))
                 _handlerByPrefixAndVerb.Add(prefix, 
                     new Dictionary<HttpVerb, Action<HttpListenerRequest, HttpListenerResponse>>());
@@ -46,44 +52,24 @@ namespace SimpleHttpServer
 
         public void Get(string prefix, Action<HttpListenerRequest, HttpListenerResponse> act)
         {
-            prefix = AddHandler(prefix);
-
-            AddHandler(prefix, HttpVerb.Get, act);
-
+              AddHandler(prefix, HttpVerb.Get, act);
         }
 
-        private string AddHandler(string prefix)
-        {
-            if (!prefix.EndsWith("/")) prefix = prefix + "/";
 
-            string fulladress = _serverAdress + prefix;
-
-            _listener.Prefixes.Add("http://localhost:8080/");
-            return prefix;
-        }
 
         public void Put(string prefix, Action<HttpListenerRequest, HttpListenerResponse> act)
         {
-            prefix = AddHandler(prefix);
-
             AddHandler(prefix, HttpVerb.Put, act);
-
         }
 
         public void Post(string prefix, Action<HttpListenerRequest, HttpListenerResponse> act)
         {
-            prefix = AddHandler(prefix);
-
             AddHandler(prefix, HttpVerb.Post, act);
-
         }
 
         public void Delete(string prefix, Action<HttpListenerRequest, HttpListenerResponse> act)
         {
-            prefix = AddHandler(prefix);
-
             AddHandler(prefix, HttpVerb.Delete, act);
-
         }
 
 
@@ -97,7 +83,7 @@ namespace SimpleHttpServer
             HttpListenerRequest request = context.Request;
             HttpListenerResponse response = context.Response;
 
-            string url = request.RawUrl;
+            string url = request.RawUrl.Substring(1, request.RawUrl.Length -1) ;
 
             if (_handlerByPrefixAndVerb.ContainsKey(url))
             {
