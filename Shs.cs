@@ -120,15 +120,13 @@ namespace SimpleHttpServer
                         response.StatusDescription = "Server Error";
 
                         if (request.IsLocal)
-                        {
-                            
+                        {                            
                                 string message = "Message {0} /r/nSource {1}/r/n Stacktrace {2}";
 
                                 var data = string.Format(message, 
                                     ex.Message,ex.Source, ex.StackTrace);
                                 response.StatusDescription = data;
-                        }
-                            
+                        }                            
                     }
 
                 }
@@ -136,7 +134,6 @@ namespace SimpleHttpServer
                 {
                     response.StatusCode = 405;
                     response.StatusDescription = "No handler for this HTTP method";
-
                 }
             }
             else
