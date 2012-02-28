@@ -83,6 +83,7 @@ namespace SimpleHttpServer
             HttpListenerRequest request = context.Request;
             HttpListenerResponse response = context.Response;
 
+            
             string url = request.RawUrl.Substring(1, request.RawUrl.Length -1) ;
 
             if (_handlerByPrefixAndVerb.ContainsKey(url))
@@ -108,7 +109,32 @@ namespace SimpleHttpServer
                 }
 
                 if (handlers.ContainsKey(verb))
-                    handlers[verb](request, response);
+                {
+                    try
+                    {
+                        handlers[verb](request, response);
+                    }
+                    catch (Exception ex)
+                    {
+                        response.StatusCode = 503;
+                        response.StatusDescription = "Server Error";
+
+                        if (request.IsLocal)
+                        {
+                            using (var stream = response.OutputStream)
+                            {
+
+                                string message = "<HTML><BODY>Message {0} /r/nSource {1}/r/n Stacktrace {2}</BODY></HTML>";
+
+                                var data = System.Text.Encoding.UTF8.GetBytes(string.Format(message, 
+                                    ex.Message,ex.Source, ex.StackTrace));
+                                stream.Write(data, 0, data.Length);
+                            }
+                        }
+                            
+                    }
+
+                }
                 else
                 {
                     response.StatusCode = 405;
