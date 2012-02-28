@@ -121,15 +121,12 @@ namespace SimpleHttpServer
 
                         if (request.IsLocal)
                         {
-                            using (var stream = response.OutputStream)
-                            {
+                            
+                                string message = "Message {0} /r/nSource {1}/r/n Stacktrace {2}";
 
-                                string message = "<HTML><BODY>Message {0} /r/nSource {1}/r/n Stacktrace {2}</BODY></HTML>";
-
-                                var data = System.Text.Encoding.UTF8.GetBytes(string.Format(message, 
-                                    ex.Message,ex.Source, ex.StackTrace));
-                                stream.Write(data, 0, data.Length);
-                            }
+                                var data = string.Format(message, 
+                                    ex.Message,ex.Source, ex.StackTrace);
+                                response.StatusDescription = data;
                         }
                             
                     }
