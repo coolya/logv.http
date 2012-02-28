@@ -1,4 +1,5 @@
-'''Simple asnc HTML Server für .Net'''
+Simple async HTML Server for .Net
+=================================
 
 This is a simple Http server for .net. Currently it is just a tiny HttpListener wrapper.
 
