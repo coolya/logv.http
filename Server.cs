@@ -21,7 +21,7 @@ using System.Net;
 
 namespace SimpleHttpServer
 {
-    public class Shs
+    public class Server
     {
         private enum HttpVerb
         {
@@ -38,7 +38,7 @@ namespace SimpleHttpServer
             Dictionary<HttpVerb, Action<HttpListenerRequest, HttpListenerResponse>>> _handlerByPrefixAndVerb 
             = new Dictionary<string,Dictionary<HttpVerb,Action<HttpListenerRequest,HttpListenerResponse>>>();
 
-        public Shs(string root, int port)
+        public Server(string root, int port)
         {
             _listener = new  HttpListener();
             _serverAdress = string.Format("http://{0}:{1}/", root, port);
@@ -95,6 +95,7 @@ namespace SimpleHttpServer
 
             _listener.BeginGetContext(new AsyncCallback(IncommingRequest), _listener);
 
+            
             HttpListenerRequest request = context.Request;
             HttpListenerResponse response = context.Response;
 
