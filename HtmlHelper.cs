@@ -15,16 +15,64 @@
  */
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Runtime.Serialization.Json;
 using System.Text;
 
 namespace SimpleHttpServer
 {
-    public class HtmlHelper
+    public static class HtmlHelper
     {
         public static string PackIntoHtml(string body)
         {
             return string.Format("<HTML><BODY>{0}</BODY></HTML>", body);
+        }
+
+        public static string GetJson(object obj)
+        {
+            string result = null;
+
+            var data = new MemoryStream();
+
+            try
+            {
+                var ser = new DataContractJsonSerializer(obj.GetType());
+
+                ser.WriteObject(data, obj);
+
+                result = Encoding.UTF8.GetString(data.ToArray());
+            }
+            finally
+            {
+                data.Close();
+            }
+
+            return result;
+        }
+
+        public static void WriteJson(this Stream stream, object obj)
+        {
+            var ser = new DataContractJsonSerializer(obj.GetType());
+
+            ser.WriteObject(stream, obj);
+        }
+
+
+        public static T GetObject<T>(string json)
+        {
+            var data = new MemoryStream(Encoding.UTF8.GetBytes(json));
+
+            var ser = new DataContractJsonSerializer(typeof (T));
+
+            return (T) ser.ReadObject(data);
+        }
+
+        public static T GetObject<T>(this Stream stream)
+        {
+            var ser = new DataContractJsonSerializer(typeof(T));
+
+            return (T)ser.ReadObject(stream);
         }
     }
 }
