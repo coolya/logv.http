@@ -27,7 +27,7 @@ namespace SimpleHttpServer
 
         public ServerResponse(HttpListenerResponse res)
         {
-            _res = res;            
+            _res = res;    
             _outputStream = _res.OutputStream;
         }
 
@@ -104,6 +104,11 @@ namespace SimpleHttpServer
         {
             get { return _res.RedirectLocation; }
             set { _res.RedirectLocation = value; }
+        }
+
+        public Stream OutputStream
+        {
+            get { return _res.OutputStream; }
         }
 
         public Version ProtocolVersion
