@@ -14,8 +14,6 @@
    limitations under the License.
  */
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Text;
 using System.Net;
 using System.IO;
@@ -24,8 +22,8 @@ namespace SimpleHttpServer
 {
     public class ServerResponse : IDisposable
     {
-        HttpListenerResponse _res;
-        Stream _outputStream;
+        readonly HttpListenerResponse _res;
+        readonly Stream _outputStream;
 
         public ServerResponse(HttpListenerResponse res)
         {
@@ -91,6 +89,11 @@ namespace SimpleHttpServer
             return base.Equals(obj);
         }
 
+        public override int GetHashCode()
+        {
+            return _res.GetHashCode();
+        }
+
         public WebHeaderCollection Headers
         {
             get { return _res.Headers; }
@@ -138,7 +141,7 @@ namespace SimpleHttpServer
 
         public ServerResponse Write(string str)
         {
-            var bytez = System.Text.Encoding.UTF8.GetBytes(str);
+            var bytez = Encoding.UTF8.GetBytes(str);
             _outputStream.Write(bytez, 0, bytez.Length);
             return this;            
         }
@@ -150,6 +153,7 @@ namespace SimpleHttpServer
 
         public void Close()
         {
+            _outputStream.Close();
             _res.Close();
         }
     }

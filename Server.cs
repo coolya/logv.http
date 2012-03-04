@@ -15,8 +15,6 @@
  */
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Net;
 
 namespace SimpleHttpServer
@@ -31,12 +29,12 @@ namespace SimpleHttpServer
             Delete
         }
 
-        private HttpListener _listener;
-        private string _serverAdress;
+        private readonly HttpListener _listener;
+        private readonly string _serverAdress;
 
-        private Dictionary<string,
-            Dictionary<HttpVerb, Action<HttpListenerRequest, HttpListenerResponse>>> _handlerByPrefixAndVerb 
-            = new Dictionary<string,Dictionary<HttpVerb,Action<HttpListenerRequest,HttpListenerResponse>>>();
+        private readonly Dictionary<string,
+            Dictionary<HttpVerb, Action<HttpListenerRequest, ServerResponse>>> _handlerByPrefixAndVerb
+            = new Dictionary<string, Dictionary<HttpVerb, Action<HttpListenerRequest, ServerResponse>>>();
 
         public Server(string root, int port)
         {
@@ -44,7 +42,7 @@ namespace SimpleHttpServer
             _serverAdress = string.Format("http://{0}:{1}/", root, port);
         }
 
-        private void AddHandler(string prefix, HttpVerb verb, Action<HttpListenerRequest, HttpListenerResponse> act)
+        private void AddHandler(string prefix, HttpVerb verb, Action<HttpListenerRequest, ServerResponse> act)
         {
 
             string fulladress = prefix.EndsWith("/") 
@@ -53,8 +51,8 @@ namespace SimpleHttpServer
             _listener.Prefixes.Add(fulladress);
 
             if (!_handlerByPrefixAndVerb.ContainsKey(prefix))
-                _handlerByPrefixAndVerb.Add(prefix, 
-                    new Dictionary<HttpVerb, Action<HttpListenerRequest, HttpListenerResponse>>());
+                _handlerByPrefixAndVerb.Add(prefix,
+                    new Dictionary<HttpVerb, Action<HttpListenerRequest, ServerResponse>>());
 
             _handlerByPrefixAndVerb[prefix].Add(verb, act);
         }
@@ -65,24 +63,24 @@ namespace SimpleHttpServer
             _listener.BeginGetContext(new AsyncCallback(IncommingRequest), _listener);
         }
 
-        public void Get(string prefix, Action<HttpListenerRequest, HttpListenerResponse> act)
+        public void Get(string prefix, Action<HttpListenerRequest, ServerResponse> act)
         {
               AddHandler(prefix, HttpVerb.Get, act);
         }
 
 
 
-        public void Put(string prefix, Action<HttpListenerRequest, HttpListenerResponse> act)
+        public void Put(string prefix, Action<HttpListenerRequest, ServerResponse> act)
         {
             AddHandler(prefix, HttpVerb.Put, act);
         }
 
-        public void Post(string prefix, Action<HttpListenerRequest, HttpListenerResponse> act)
+        public void Post(string prefix, Action<HttpListenerRequest, ServerResponse> act)
         {
             AddHandler(prefix, HttpVerb.Post, act);
         }
 
-        public void Delete(string prefix, Action<HttpListenerRequest, HttpListenerResponse> act)
+        public void Delete(string prefix, Action<HttpListenerRequest, ServerResponse> act)
         {
             AddHandler(prefix, HttpVerb.Delete, act);
         }
@@ -91,7 +89,7 @@ namespace SimpleHttpServer
         private void IncommingRequest(IAsyncResult result)
         {
             HttpListener listener = (HttpListener)result.AsyncState;
-            HttpListenerContext context = listener.EndGetContext(result);
+            var context = listener.EndGetContext(result);
 
             _listener.BeginGetContext(new AsyncCallback(IncommingRequest), _listener);
 
@@ -128,7 +126,7 @@ namespace SimpleHttpServer
                 {
                     try
                     {
-                        handlers[verb](request, response);
+                        handlers[verb](request, new ServerResponse(response));
                     }
                     catch (Exception ex)
                     {
@@ -137,7 +135,7 @@ namespace SimpleHttpServer
 
                         if (request.IsLocal)
                         {                            
-                                string message = "Message {0} /r/nSource {1}/r/n Stacktrace {2}";
+                                const string message = "Message {0} /r/nSource {1}/r/n Stacktrace {2}";
 
                                 var data = string.Format(message, 
                                     ex.Message,ex.Source, ex.StackTrace);
