@@ -1,0 +1,156 @@
+﻿/*
+     Copyright 2012 Kolja Dummann <k.dummann@gmail.com>
+
+   Licensed under the Apache License, Version 2.0 (the "License");
+   you may not use this file except in compliance with the License.
+   You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an "AS IS" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License.
+ */
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Net;
+using System.IO;
+
+namespace SimpleHttpServer
+{
+    public class ServerResponse : IDisposable
+    {
+        HttpListenerResponse _res;
+        Stream _outputStream;
+
+        public Response(HttpListenerResponse res)
+        {
+            _res = res;            
+            _outputStream = _res.OutputStream;
+        }
+
+        #region RequestWrapper
+
+        public Response Abort()
+        { 
+            _res.Abort();
+            return this;
+        }
+
+        public Response AddHeader(string name, string value)
+        {
+            _res.AddHeader(name, value);
+            return this;
+        }
+
+        public Response AddCookie(Cookie cookie)
+        {
+            _res.AppendCookie(cookie);
+            return this;
+        }
+
+        public Encoding ContentEncoding
+        {
+            get { return _res.ContentEncoding; }
+            set { _res.ContentEncoding = value; }
+        }
+
+        public long ContentLength64
+        {
+            get { return _res.ContentLength64; }
+            set { _res.ContentLength64 = value; }
+        }
+
+        public string ContentType
+        {
+            get { return _res.ContentType; }
+            set { _res.ContentType = value; }
+        }
+
+        public CookieCollection Cookies
+        {
+            get { return _res.Cookies; }
+            set { _res.Cookies = value; }
+        }
+
+        public bool KeepAlive
+        {
+            get { return _res.KeepAlive; }
+            set { _res.KeepAlive = value; }
+        }
+
+        public override bool Equals(object obj)
+        {
+            if (obj is Response)
+                return ((Response)obj)._res.Equals(_res);
+
+            return base.Equals(obj);
+        }
+
+        public WebHeaderCollection Headers
+        {
+            get { return _res.Headers; }
+            set { _res.Headers = value; }
+        }
+
+        public string RedirectLocation
+        {
+            get { return _res.RedirectLocation; }
+            set { _res.RedirectLocation = value; }
+        }
+
+        public Version ProtocolVersion
+        {
+            get { return _res.ProtocolVersion; }
+            set { _res.ProtocolVersion = value; }
+        }
+
+        public Response Redirect(string url)
+        {
+            _res.Redirect(url);
+            return this;
+        }
+
+        public bool SendChunked
+        {
+            get { return _res.SendChunked; }
+            set { _res.SendChunked = value; }
+        }
+
+        public int StatusCode
+        {
+            get { return _res.StatusCode; }
+            set { _res.StatusCode = value; }
+        }
+
+        public string StatusDescription
+        {
+            get { return _res.StatusDescription; }
+            set { _res.StatusDescription = value; }
+        }
+
+
+        #endregion
+
+        public Response Write(string str)
+        {
+            var bytez = System.Text.Encoding.UTF8.GetBytes(str);
+            _outputStream.Write(bytez, 0, bytez.Length);
+            return this;            
+        }
+
+        public void Dispose()
+        {
+            Close();
+        }
+
+        public void Close()
+        {
+            _res.Close();
+        }
+    }
+}
