@@ -27,7 +27,7 @@ namespace SimpleHttpServer
         HttpListenerResponse _res;
         Stream _outputStream;
 
-        public Response(HttpListenerResponse res)
+        public ServerResponse(HttpListenerResponse res)
         {
             _res = res;            
             _outputStream = _res.OutputStream;
@@ -35,19 +35,19 @@ namespace SimpleHttpServer
 
         #region RequestWrapper
 
-        public Response Abort()
+        public ServerResponse Abort()
         { 
             _res.Abort();
             return this;
         }
 
-        public Response AddHeader(string name, string value)
+        public ServerResponse AddHeader(string name, string value)
         {
             _res.AddHeader(name, value);
             return this;
         }
 
-        public Response AddCookie(Cookie cookie)
+        public ServerResponse AddCookie(Cookie cookie)
         {
             _res.AppendCookie(cookie);
             return this;
@@ -85,8 +85,8 @@ namespace SimpleHttpServer
 
         public override bool Equals(object obj)
         {
-            if (obj is Response)
-                return ((Response)obj)._res.Equals(_res);
+            if (obj is ServerResponse)
+                return ((ServerResponse)obj)._res.Equals(_res);
 
             return base.Equals(obj);
         }
@@ -109,7 +109,7 @@ namespace SimpleHttpServer
             set { _res.ProtocolVersion = value; }
         }
 
-        public Response Redirect(string url)
+        public ServerResponse Redirect(string url)
         {
             _res.Redirect(url);
             return this;
@@ -136,7 +136,7 @@ namespace SimpleHttpServer
 
         #endregion
 
-        public Response Write(string str)
+        public ServerResponse Write(string str)
         {
             var bytez = System.Text.Encoding.UTF8.GetBytes(str);
             _outputStream.Write(bytez, 0, bytez.Length);
