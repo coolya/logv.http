@@ -45,8 +45,11 @@ namespace SimpleHttpServer
         private void AddHandler(string prefix, HttpVerb verb, Action<HttpListenerRequest, ServerResponse> act)
         {
 
-            string fulladress = prefix.EndsWith("/") 
-                ? _serverAdress + prefix : _serverAdress + prefix + "/";
+            string fulladress;
+            if (prefix.EndsWith("/") || string.IsNullOrEmpty(prefix))
+                fulladress = _serverAdress + prefix;
+            else 
+                fulladress  = _serverAdress + prefix + "/";
 
             _listener.Prefixes.Add(fulladress);
 
