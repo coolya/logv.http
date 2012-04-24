@@ -148,11 +148,7 @@ namespace SimpleHttpServer
             _outputStream.Write(bytez, 0, bytez.Length);
             return this;            
         }
-        public ServerResponse WriteAsJson(object obj)
-        {
-            Write(HtmlHelper.GetJson(obj));
-            return this;
-        }
+
 
         public void Dispose()
         {
