@@ -83,10 +83,8 @@ namespace SimpleHttpServer
 
         public override bool Equals(object obj)
         {
-            if (obj is ServerResponse)
-                return ((ServerResponse)obj)._res.Equals(_res);
-
-            return base.Equals(obj);
+            var serverResponse = obj as ServerResponse;
+            return serverResponse != null ? (serverResponse)._res.Equals(_res) : base.Equals(obj);
         }
 
         public override int GetHashCode()
@@ -149,6 +147,11 @@ namespace SimpleHttpServer
             var bytez = Encoding.UTF8.GetBytes(str);
             _outputStream.Write(bytez, 0, bytez.Length);
             return this;            
+        }
+        public ServerResponse WriteAsJson(object obj)
+        {
+            Write(HtmlHelper.GetJson(obj));
+            return this;
         }
 
         public void Dispose()

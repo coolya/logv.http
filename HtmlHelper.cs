@@ -19,12 +19,13 @@ using System.IO;
 using System.Linq;
 using System.Runtime.Serialization.Json;
 using System.Text;
+using Newtonsoft.Json;
 
 namespace SimpleHttpServer
 {
     public static class HtmlHelper
     {
-        public static string PackIntoHtml(string body)
+        public static string PackIntoHtmlBody(string body)
         {
             return string.Format("<HTML><BODY>{0}</BODY></HTML>", body);
         }
@@ -32,47 +33,13 @@ namespace SimpleHttpServer
         public static string GetJson(object obj)
         {
             string result = null;
-
-            var data = new MemoryStream();
-
-            try
-            {
-                var ser = new DataContractJsonSerializer(obj.GetType());
-
-                ser.WriteObject(data, obj);
-
-                result = Encoding.UTF8.GetString(data.ToArray());
-            }
-            finally
-            {
-                data.Close();
-            }
-
+                     result = JsonConvert.SerializeObject(obj);
             return result;
         }
 
-        public static void WriteJson(this Stream stream, object obj)
-        {
-            var ser = new DataContractJsonSerializer(obj.GetType());
-
-            ser.WriteObject(stream, obj);
-        }
-
-
         public static T GetObject<T>(string json)
         {
-            var data = new MemoryStream(Encoding.UTF8.GetBytes(json));
-
-            var ser = new DataContractJsonSerializer(typeof (T));
-
-            return (T) ser.ReadObject(data);
-        }
-
-        public static T GetObject<T>(this Stream stream)
-        {
-            var ser = new DataContractJsonSerializer(typeof(T));
-
-            return (T)ser.ReadObject(stream);
+            return JsonConvert.DeserializeObject<T>(json);
         }
     }
 }
