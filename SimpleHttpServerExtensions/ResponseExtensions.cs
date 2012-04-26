@@ -28,5 +28,19 @@ namespace SimpleHttpServer
             res.Write(HtmlHelper.GetJson(obj));
             return res;
         }
+
+        public static ServerResponse Do503(this ServerResponse res, Exception ex)
+        {
+            res.StatusCode = 503;
+            res.StatusDescription = ex.Message.Length < 513 ? ex.Message : string.Empty;
+            return res;
+        }
+
+        public static ServerResponse Do503(this ServerResponse res)
+        {
+            res.StatusCode = 503;
+            return res;
+        }
+
     }
 }

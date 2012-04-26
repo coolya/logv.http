@@ -71,8 +71,6 @@ namespace SimpleHttpServer
               AddHandler(prefix, HttpVerb.Get, act);
         }
 
-
-
         public void Put(string prefix, Action<HttpListenerRequest, ServerResponse> act)
         {
             AddHandler(prefix, HttpVerb.Put, act);
@@ -95,18 +93,16 @@ namespace SimpleHttpServer
             var context = listener.EndGetContext(result);
 
             _listener.BeginGetContext(new AsyncCallback(IncommingRequest), _listener);
-
             
             HttpListenerRequest request = context.Request;
-            HttpListenerResponse response = context.Response;
-
+            HttpListenerResponse response = context.Response;            
             
             string url = request.RawUrl.Substring(1, request.RawUrl.Length -1) ;
 
-            if (_handlerByPrefixAndVerb.ContainsKey(url))
-            {
-                var handlers = _handlerByPrefixAndVerb[url];
+            var handlers = GetHandlers(request);
 
+            if (handlers != null)
+            {
                 HttpVerb verb = HttpVerb.Get;
 
                 switch (request.HttpMethod)
@@ -141,8 +137,7 @@ namespace SimpleHttpServer
                                 const string message = "Message {0} /r/nSource {1}/r/n Stacktrace {2}";
 
                                 var data = string.Format(message, 
-                                    ex.Message,ex.Source, ex.StackTrace);
-                                response.StatusDescription = data;
+                                    ex.Message,ex.Source, ex.StackTrace);                                
                         }                            
                     }
 
@@ -151,14 +146,68 @@ namespace SimpleHttpServer
                 {
                     response.StatusCode = 405;
                     response.StatusDescription = "No handler for this HTTP method";
+                    response.Close();
                 }
             }
             else
             {
                 response.StatusCode = 404;
                 response.StatusDescription = "Not Found";
+                response.Close();
             }
-            response.Close();
+        }
+
+        private Dictionary<HttpVerb, Action<HttpListenerRequest, ServerResponse>> GetHandlers(HttpListenerRequest request)
+        {
+            var uri = request.Url;
+            
+
+            //we have a single generic handler
+            if(_handlerByPrefixAndVerb.Count == 1 && _handlerByPrefixAndVerb.ContainsKey(""))
+                return _handlerByPrefixAndVerb[""];
+
+            var urlWithoutQuery = uri.PathAndQuery.Replace(uri.Query, "");
+
+            if (_handlerByPrefixAndVerb.ContainsKey(urlWithoutQuery))
+                return _handlerByPrefixAndVerb[urlWithoutQuery];
+
+            //ok no 100% match, lets find the best handler
+            var keys = _handlerByPrefixAndVerb.Keys;
+
+            int lastBestMatch = -1;
+            string lastMatchKey = string.Empty;
+
+            foreach (var key in keys)
+            {
+                //if the match can't get better the one we have we ignore it
+                if (key.Length < lastBestMatch)
+                    continue;
+
+                int k;
+                for (k = 1; k <= key.Length; k++)
+                {
+                    if(!urlWithoutQuery.StartsWith(key.Substring(0, k)))
+                    {
+                        if (lastBestMatch < k)
+                        {
+                            lastBestMatch = k;
+                            lastMatchKey = key;
+                        }
+                        break;
+                    }
+                }
+
+                if (k == key.Length && lastBestMatch < k)
+                {
+                    lastBestMatch = k;
+                    lastMatchKey = key;
+                }
+            }
+
+            if (lastBestMatch != -1)
+                return _handlerByPrefixAndVerb[lastMatchKey];
+            else
+                return null;
         }
 
         public void Stop()

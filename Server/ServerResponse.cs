@@ -31,7 +31,7 @@ namespace SimpleHttpServer
             _outputStream = _res.OutputStream;
         }
 
-        #region RequestWrapper
+        #region ResponseWrapper
 
         public ServerResponse Abort()
         { 
@@ -106,7 +106,7 @@ namespace SimpleHttpServer
 
         public Stream OutputStream
         {
-            get { return _res.OutputStream; }
+            get { return _outputStream; }
         }
 
         public Version ProtocolVersion
