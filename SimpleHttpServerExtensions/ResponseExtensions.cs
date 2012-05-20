@@ -32,7 +32,7 @@ namespace SimpleHttpServer
         public static ServerResponse Do503(this ServerResponse res, Exception ex)
         {
             res.StatusCode = 503;
-            res.StatusDescription = ex.Message.Length < 513 ? ex.Message : string.Empty;
+            res.StatusDescription = ex.Message.Length < 513 ? ex.Message.Replace("\r\n", "") : string.Empty;
             return res;
         }
 
