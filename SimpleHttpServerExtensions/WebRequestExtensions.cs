@@ -21,19 +21,13 @@ using System.Text;
 
 namespace SimpleHttpServer
 {
-    public static class RequestExtensions
+    public static class WebRequestExtensions
     {
-        public static string Content(this HttpListenerRequest req)
+        public static WebRequest Write(this WebRequest req, string data)
         {
-            string result = string.Empty;
-
-            if (req.ContentLength64 > 0)
-            {
-                var bytez = new byte[req.ContentLength64];
-                req.InputStream.Read(bytez, 0, (int)req.ContentLength64);
-                result = Encoding.UTF8.GetString(bytez);
-            }
-            return result;
+            var bytez = Encoding.UTF8.GetBytes(data);
+            req.GetRequestStream().Write(bytez, 0, bytez.Length);            
+            return req;
         }
     }
 }
