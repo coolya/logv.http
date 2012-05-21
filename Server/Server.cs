@@ -138,7 +138,9 @@ namespace SimpleHttpServer
 
                                 var data = string.Format(message, 
                                     ex.Message,ex.Source, ex.StackTrace);                                
-                        }                            
+                        }
+
+                        response.Close();
                     }
 
                 }
@@ -166,7 +168,14 @@ namespace SimpleHttpServer
             if(_handlerByPrefixAndVerb.Count == 1 && _handlerByPrefixAndVerb.ContainsKey(""))
                 return _handlerByPrefixAndVerb[""];
 
-            var urlWithoutQuery = uri.PathAndQuery.Replace(uri.Query, "");
+            string urlWithoutQuery;
+            if (!string.IsNullOrEmpty(uri.Query))
+                urlWithoutQuery = uri.PathAndQuery.Replace(uri.Query, "");
+            else
+                urlWithoutQuery = uri.PathAndQuery;
+
+            if (urlWithoutQuery[0] == '/')
+                urlWithoutQuery = urlWithoutQuery.Substring(1);
 
             if (_handlerByPrefixAndVerb.ContainsKey(urlWithoutQuery))
                 return _handlerByPrefixAndVerb[urlWithoutQuery];
@@ -197,7 +206,7 @@ namespace SimpleHttpServer
                     }
                 }
 
-                if (k == key.Length && lastBestMatch < k)
+                if (k - 1 == key.Length && lastBestMatch < k)
                 {
                     lastBestMatch = k;
                     lastMatchKey = key;
