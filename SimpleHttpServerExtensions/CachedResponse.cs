@@ -15,6 +15,7 @@ namespace SimpleHttpServer
         public CachedResponse(ServerResponse res) : base (res)
         {
             this.res = res;
+            cached = true;
         }
 
         public override System.IO.Stream OutputStream
@@ -22,6 +23,18 @@ namespace SimpleHttpServer
             get
             {
                 return bufferStream;
+            }
+        }
+
+        public override long ContentLength64
+        {
+            get
+            {
+                return base.ContentLength64;
+            }
+            set
+            {
+                throw new InvalidOperationException("Content-Length will be set when the request is closed!");
             }
         }
 

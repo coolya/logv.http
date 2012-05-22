@@ -24,6 +24,7 @@ namespace SimpleHttpServer
     {
         readonly HttpListenerResponse _res;
         readonly Stream _outputStream;
+        protected bool cached = false;
 
         public ServerResponse(HttpListenerResponse res)
         {
@@ -59,7 +60,7 @@ namespace SimpleHttpServer
             set { _res.ContentEncoding = value; }
         }
 
-        public long ContentLength64
+        public virtual long ContentLength64
         {
             get { return _res.ContentLength64; }
             set { _res.ContentLength64 = value; }
@@ -145,6 +146,8 @@ namespace SimpleHttpServer
         #endregion
 
         protected HttpListenerResponse InnerResponse { get { return _res; } }
+
+        public bool IsCached { get { return cached; } }
 
         public void Dispose()
         {
