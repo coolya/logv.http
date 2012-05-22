@@ -31,6 +31,8 @@ namespace SimpleHttpServer
             _outputStream = _res.OutputStream;
         }
 
+        public ServerResponse(ServerResponse res) : this(res.InnerResponse) {}
+
         #region ResponseWrapper
 
         public ServerResponse Abort()
@@ -104,7 +106,7 @@ namespace SimpleHttpServer
             set { _res.RedirectLocation = value; }
         }
 
-        public Stream OutputStream
+        public virtual Stream OutputStream
         {
             get { return _outputStream; }
         }
@@ -142,20 +144,14 @@ namespace SimpleHttpServer
 
         #endregion
 
-        public ServerResponse Write(string str)
-        {
-            var bytez = Encoding.UTF8.GetBytes(str);
-            _outputStream.Write(bytez, 0, bytez.Length);
-            return this;            
-        }
-
+        protected HttpListenerResponse InnerResponse { get { return _res; } }
 
         public void Dispose()
         {
             Close();
         }
 
-        public void Close()
+        public virtual void Close()
         {
             _outputStream.Close();
             _res.Close();

@@ -31,9 +31,15 @@ namespace SimpleHttpServer
             {
                 var bytez = new byte[req.ContentLength64];
                 req.InputStream.Read(bytez, 0, (int)req.ContentLength64);
-                result = Encoding.UTF8.GetString(bytez);
+                result = req.GetEncoding().GetString(bytez);
             }
             return result;
+        }
+
+        public static Encoding GetEncoding(this HttpListenerRequest req)
+        {
+            //todo check Content-Encoding an return the correct encoding
+            return Encoding.UTF8;
         }
     }
 }

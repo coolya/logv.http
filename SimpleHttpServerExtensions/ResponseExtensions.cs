@@ -42,5 +42,17 @@ namespace SimpleHttpServer
             return res;
         }
 
+        public static ServerResponse Write(this ServerResponse res, string data)
+        {
+            var bytez = Encoding.UTF8.GetBytes(data);
+            res.OutputStream.Write(bytez, 0, bytez.Length);
+            return res;
+        }
+
+        public static ServerResponse GetCachedResponse(this ServerResponse res)
+        {
+            return new CachedResponse(res);
+        }
+
     }
 }

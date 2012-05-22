@@ -25,9 +25,15 @@ namespace SimpleHttpServer
     {
         public static WebRequest Write(this WebRequest req, string data)
         {
-            var bytez = Encoding.UTF8.GetBytes(data);
+            var bytez = req.GetEncoding().GetBytes(data);
             req.GetRequestStream().Write(bytez, 0, bytez.Length);            
             return req;
+        }
+
+        public static Encoding GetEncoding(this WebRequest req)
+        {
+            //todo read content-encoding an return the correct encoding
+            return Encoding.UTF8;
         }
     }
 }
