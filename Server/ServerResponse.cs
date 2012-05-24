@@ -20,6 +20,7 @@ using System.IO;
 
 namespace SimpleHttpServer
 {
+    [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1063:ImplementIDisposableCorrectly")]
     public class ServerResponse : IDisposable
     {
         readonly HttpListenerResponse _res;
@@ -149,9 +150,11 @@ namespace SimpleHttpServer
 
         public bool IsCached { get { return cached; } }
 
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1063:ImplementIDisposableCorrectly")]
         public void Dispose()
         {
             Close();
+            GC.SuppressFinalize(this);
         }
 
         public virtual void Close()

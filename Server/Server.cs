@@ -19,7 +19,8 @@ using System.Net;
 
 namespace SimpleHttpServer
 {
-    public class Server
+    [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1001:TypesThatOwnDisposableFieldsShouldBeDisposable")]
+    public class Server 
     {
         private enum HttpVerb
         {
