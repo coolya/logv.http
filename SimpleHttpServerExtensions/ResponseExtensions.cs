@@ -15,6 +15,7 @@
  */
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using SimpleHttpServer;
@@ -27,6 +28,26 @@ namespace SimpleHttpServer
         {
             res.Write(HtmlHelper.GetJson(obj));
             return res;
+        }
+
+        public static void ServeFile(this ServerResponse res, string path)
+        {
+            if (!File.Exists(path))
+                throw new ArgumentException("File does not exist");
+
+            var fileInfo = new FileInfo(path);
+            res.ContentLength64 = fileInfo.Length;
+
+            var stream = File.Open(path, FileMode.Open, FileAccess.Read);
+            var copier = new AsyncStreamCopier(stream, res.OutputStream);
+
+            copier.Completed += (s, e) =>
+            {
+                e.InputStream.Close();
+                res.Close();
+            };
+
+            copier.Copy();
         }
 
         public static ServerResponse Do503(this ServerResponse res, Exception ex)
