@@ -21,6 +21,20 @@ using System.IO;
 
 namespace SimpleHttpServer
 {
+    public class AsynStreamCopyCompleteEventArgs : EventArgs
+    {
+        readonly Stream inputStream;
+        readonly Stream outputStream;
+
+        public Stream InputStream { get { return inputStream; } }
+        public Stream OutputStream { get { return outputStream; } }
+
+        public AsynStreamCopyCompleteEventArgs(Stream input, Stream output)
+        {
+            inputStream = input;
+            outputStream = output;
+        }
+    }
     /// <summary>
     /// Copies data from one stream into another using the async pattern. Copies are done in 4k blocks.
     /// </summary>
@@ -34,7 +48,7 @@ namespace SimpleHttpServer
         /// <summary>
         /// Raised when all data is copied
         /// </summary>
-        public event EventHandler Completed;
+        public event EventHandler<AsynStreamCopyCompleteEventArgs> Completed;
 
         public AsyncStreamCopier(Stream input, Stream output)
         {
@@ -76,7 +90,7 @@ namespace SimpleHttpServer
             var handler = Completed;
 
             if (handler != null)
-                handler(this, EventArgs.Empty);
+                handler(this,new AsynStreamCopyCompleteEventArgs(_input, _output));
         }
     }
 }
