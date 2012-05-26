@@ -51,7 +51,7 @@ namespace SimpleHttpTest
             const string msg = "Test complete";
             int count = Encoding.UTF8.GetByteCount(msg);
 
-            _server.Get("", (r, s) =>
+            _server.Get("http://localhost:13337", (r, s) =>
                 {
                     s.ContentLength64 = count;
                     s.Write(msg);
@@ -87,7 +87,7 @@ namespace SimpleHttpTest
             const string msg = "Test complete";
             int count = Encoding.UTF8.GetByteCount(msg);
 
-            _server.Put("", (r, s) =>
+            _server.Put("http://localhost:13337", (r, s) =>
             {
                 Assert.AreEqual(msg, r.Content());
                 Assert.AreEqual(count, r.ContentLength64);
@@ -132,7 +132,7 @@ namespace SimpleHttpTest
             const string msg = "Test complete";
             int count = Encoding.UTF8.GetByteCount(msg);
 
-            _server.Delete("", (r, s) =>
+            _server.Delete("http://localhost:13337", (r, s) =>
             {
                 Assert.AreEqual(msg, r.Content());
                 Assert.AreEqual(count, r.ContentLength64);
@@ -176,7 +176,7 @@ namespace SimpleHttpTest
             const string msg = "Test complete";
             int count = Encoding.UTF8.GetByteCount(msg);
 
-            _server.Post("", (r, s) =>
+            _server.Post("http://localhost:13337", (r, s) =>
             {
                 Assert.AreEqual(msg, r.Content());
                 Assert.AreEqual(count, r.ContentLength64);
@@ -217,14 +217,14 @@ namespace SimpleHttpTest
         {
             var mutex = new AutoResetEvent(false);
             bool complete = false;
-            _server.Get("test1", (rq, rs) =>
+            _server.Get("http://localhost:13337/test1", (rq, rs) =>
                 {
                     complete = true;
                     mutex.Set();
                     rs.Close();
                 });
 
-            _server.Get("test2/", (rq, rs) => Assert.Fail());
+            _server.Get("http://localhost:13337/test2/", (rq, rs) => Assert.Fail());
 
             _server.Start();
 
@@ -243,14 +243,14 @@ namespace SimpleHttpTest
         {
             var mutex = new AutoResetEvent(false);
             bool complete = false;
-            _server.Get("test1", (rq, rs) =>
+            _server.Get("http://localhost:13337/test1", (rq, rs) =>
             {
                 complete = true;
                 mutex.Set();
                 rs.Close();
             });
 
-            _server.Get("test2/", (rq, rs) => Assert.Fail());
+            _server.Get("http://localhost:13337/test2/", (rq, rs) => Assert.Fail());
 
             _server.Start();
 
@@ -270,9 +270,9 @@ namespace SimpleHttpTest
             var mutex = new AutoResetEvent(false);
             bool complete = false;
 
-            _server.Get("test/", (rq, rs) => Assert.Fail());
+            _server.Get("http://localhost:13337/test/", (rq, rs) => Assert.Fail());
 
-            _server.Get("test1", (rq, rs) =>
+            _server.Get("http://localhost:13337/test1", (rq, rs) =>
             {
                 complete = true;
                 mutex.Set();
@@ -295,7 +295,7 @@ namespace SimpleHttpTest
         [ExpectedException(typeof(WebException))]
         public void ExceptionTest()
         {
-            _server.Get("test1", (rq, rs) =>
+            _server.Get("http://localhost:13337/test1", (rq, rs) =>
             {
                 throw new Exception();
             });
@@ -311,7 +311,7 @@ namespace SimpleHttpTest
         [ExpectedException(typeof(WebException))]
         public void Exception2Test()
         {
-            _server.Delete("test1", (rq, rs) =>
+            _server.Delete("http://localhost:13337/test1", (rq, rs) =>
             {
                 Assert.Fail();
             });
@@ -327,12 +327,12 @@ namespace SimpleHttpTest
         [ExpectedException(typeof(WebException))]
         public void Exception3Test()
         {
-            _server.Delete("test1", (rq, rs) =>
+            _server.Delete("http://localhost:13337/test1", (rq, rs) =>
             {
                 Assert.Fail();
             });
 
-            _server.Delete("meh", (rq, rs) =>
+            _server.Delete("http://localhost:13337/meh", (rq, rs) =>
             {
                 Assert.Fail();
             });

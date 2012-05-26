@@ -1,4 +1,5 @@
-﻿/*
+﻿
+/*
      Copyright 2012 Kolja Dummann <k.dummann@gmail.com>
 
    Licensed under the Apache License, Version 2.0 (the "License");
@@ -34,60 +35,90 @@ namespace SimpleHttpServer
         private readonly string _serverAdress;
 
         private readonly Dictionary<string,
-            Dictionary<HttpVerb, Action<HttpListenerRequest, ServerResponse>>> _handlerByPrefixAndVerb
+            Dictionary<HttpVerb, Action<HttpListenerRequest, ServerResponse>>> _handlerByUrlAndVerb
             = new Dictionary<string, Dictionary<HttpVerb, Action<HttpListenerRequest, ServerResponse>>>();
 
+        /// <summary>
+        /// Creates a server instance
+        /// </summary>
+        /// <param name="root">listing root (ip or hostname or * for all requests)</param>
+        /// <param name="port"listening port></param>
         public Server(string root, int port)
         {
             _listener = new  HttpListener();
             _serverAdress = string.Format("http://{0}:{1}/", root, port);
+            _listener.Prefixes.Add(_serverAdress);
         }
 
-        private void AddHandler(string prefix, HttpVerb verb, Action<HttpListenerRequest, ServerResponse> act)
+        /// <summary>
+        /// Adds a handler for a url and http method
+        /// </summary>
+        /// <param name="url">the full url the listener is handling</param>
+        /// <param name="verb">the http method to handle</param>
+        /// <param name="act">callback to the handler</param>
+        private void AddHandler(string url, HttpVerb verb, Action<HttpListenerRequest, ServerResponse> act)
         {
 
-            string fulladress;
-            if (prefix.EndsWith("/") || string.IsNullOrEmpty(prefix))
-                fulladress = _serverAdress + prefix;
-            else 
-                fulladress  = _serverAdress + prefix + "/";
-
-            _listener.Prefixes.Add(fulladress);
-
-            if (!_handlerByPrefixAndVerb.ContainsKey(prefix))
-                _handlerByPrefixAndVerb.Add(prefix,
+            if (!_handlerByUrlAndVerb.ContainsKey(url))
+                _handlerByUrlAndVerb.Add(url,
                     new Dictionary<HttpVerb, Action<HttpListenerRequest, ServerResponse>>());
 
-            _handlerByPrefixAndVerb[prefix].Add(verb, act);
+            _handlerByUrlAndVerb[url].Add(verb, act);
         }
 
+        /// <summary>
+        /// Starts the http server
+        /// </summary>
         public void Start()
         {
             _listener.Start();
             _listener.BeginGetContext(new AsyncCallback(IncommingRequest), _listener);
         }
 
-        public void Get(string prefix, Action<HttpListenerRequest, ServerResponse> act)
+        /// <summary>
+        /// Adds a listener for a get request
+        /// </summary>
+        /// <param name="url">the full url to handle</param>
+        /// <param name="act">callback to the handler</param>
+        public void Get(string url, Action<HttpListenerRequest, ServerResponse> act)
         {
-              AddHandler(prefix, HttpVerb.Get, act);
+              AddHandler(url, HttpVerb.Get, act);
         }
 
-        public void Put(string prefix, Action<HttpListenerRequest, ServerResponse> act)
+        /// <summary>
+        /// Adds a listener for a put request
+        /// </summary>
+        /// <param name="url">the full url to handle</param>
+        /// <param name="act">callback to the handler</param>
+        public void Put(string url, Action<HttpListenerRequest, ServerResponse> act)
         {
-            AddHandler(prefix, HttpVerb.Put, act);
+            AddHandler(url, HttpVerb.Put, act);
         }
 
-        public void Post(string prefix, Action<HttpListenerRequest, ServerResponse> act)
+        /// <summary>
+        /// Adds a listener for a post request
+        /// </summary>
+        /// <param name="url">the full url to handle</param>
+        /// <param name="act">callback to the handler</param>
+        public void Post(string url, Action<HttpListenerRequest, ServerResponse> act)
         {
-            AddHandler(prefix, HttpVerb.Post, act);
+            AddHandler(url, HttpVerb.Post, act);
         }
 
-        public void Delete(string prefix, Action<HttpListenerRequest, ServerResponse> act)
+        /// <summary>
+        /// Adds a listener for a delete request
+        /// </summary>
+        /// <param name="url">the full url to handle</param>
+        /// <param name="act">callback to the handler</param>
+        public void Delete(string url, Action<HttpListenerRequest, ServerResponse> act)
         {
-            AddHandler(prefix, HttpVerb.Delete, act);
+            AddHandler(url, HttpVerb.Delete, act);
         }
 
-
+        /// <summary>
+        /// handles an incomming request from the async call
+        /// </summary>
+        /// <param name="result"></param>
         private void IncommingRequest(IAsyncResult result)
         {
             HttpListener listener = (HttpListener)result.AsyncState;
@@ -160,29 +191,24 @@ namespace SimpleHttpServer
             }
         }
 
+        /// <summary>
+        /// Gets the handler for a request. They are distinguished by the full url.
+        /// If two handler A for http://localhost and B for http://localhost/sample are registered
+        /// the function will choose based on the url which callback to invoke. A request for http://localhost/sample 
+        /// will be handled by the B, a request for http://localhost/fail will be handled by A but a request for http://localhost/sam
+        /// will be handled by B.
+        /// </summary>
+        /// <param name="request"></param>
+        /// <returns></returns>
         private Dictionary<HttpVerb, Action<HttpListenerRequest, ServerResponse>> GetHandlers(HttpListenerRequest request)
         {
-            var uri = request.Url;
+            var uri = request.Url.ToString();
             
-
-            //we have a single generic handler
-            if(_handlerByPrefixAndVerb.Count == 1 && _handlerByPrefixAndVerb.ContainsKey(""))
-                return _handlerByPrefixAndVerb[""];
-
-            string urlWithoutQuery;
-            if (!string.IsNullOrEmpty(uri.Query))
-                urlWithoutQuery = uri.PathAndQuery.Replace(uri.Query, "");
-            else
-                urlWithoutQuery = uri.PathAndQuery;
-
-            if (urlWithoutQuery[0] == '/')
-                urlWithoutQuery = urlWithoutQuery.Substring(1);
-
-            if (_handlerByPrefixAndVerb.ContainsKey(urlWithoutQuery))
-                return _handlerByPrefixAndVerb[urlWithoutQuery];
+            if (_handlerByUrlAndVerb.ContainsKey(uri))
+                return _handlerByUrlAndVerb[uri];
 
             //ok no 100% match, lets find the best handler
-            var keys = _handlerByPrefixAndVerb.Keys;
+            var keys = _handlerByUrlAndVerb.Keys;
 
             int lastBestMatch = -1;
             string lastMatchKey = string.Empty;
@@ -196,7 +222,7 @@ namespace SimpleHttpServer
                 int k;
                 for (k = 1; k <= key.Length; k++)
                 {
-                    if(!urlWithoutQuery.StartsWith(key.Substring(0, k)))
+                    if(!uri.StartsWith(key.Substring(0, k)))
                     {
                         if (lastBestMatch < k)
                         {
@@ -215,11 +241,14 @@ namespace SimpleHttpServer
             }
 
             if (lastBestMatch != -1)
-                return _handlerByPrefixAndVerb[lastMatchKey];
+                return _handlerByUrlAndVerb[lastMatchKey];
             else
                 return null;
         }
 
+        /// <summary>
+        /// Stops the http server
+        /// </summary>
         public void Stop()
         {
             _listener.Stop();
