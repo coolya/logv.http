@@ -35,8 +35,8 @@ namespace SimpleHttpServer
         private readonly string _serverAdress;
 
         private readonly Dictionary<string,
-            Dictionary<HttpVerb, Action<HttpListenerRequest, ServerResponse>>> _handlerByUrlAndVerb
-            = new Dictionary<string, Dictionary<HttpVerb, Action<HttpListenerRequest, ServerResponse>>>();
+            Dictionary<HttpVerb, Action<HttpListenerRequest, IServerResponse>>> _handlerByUrlAndVerb
+            = new Dictionary<string, Dictionary<HttpVerb, Action<HttpListenerRequest, IServerResponse>>>();
 
         /// <summary>
         /// Creates a server instance
@@ -56,12 +56,12 @@ namespace SimpleHttpServer
         /// <param name="url">the full url the listener is handling</param>
         /// <param name="verb">the http method to handle</param>
         /// <param name="act">callback to the handler</param>
-        private void AddHandler(string url, HttpVerb verb, Action<HttpListenerRequest, ServerResponse> act)
+        private void AddHandler(string url, HttpVerb verb, Action<HttpListenerRequest, IServerResponse> act)
         {
 
             if (!_handlerByUrlAndVerb.ContainsKey(url))
                 _handlerByUrlAndVerb.Add(url,
-                    new Dictionary<HttpVerb, Action<HttpListenerRequest, ServerResponse>>());
+                    new Dictionary<HttpVerb, Action<HttpListenerRequest, IServerResponse>>());
 
             _handlerByUrlAndVerb[url].Add(verb, act);
         }
@@ -80,7 +80,7 @@ namespace SimpleHttpServer
         /// </summary>
         /// <param name="url">the full url to handle</param>
         /// <param name="act">callback to the handler</param>
-        public void Get(string url, Action<HttpListenerRequest, ServerResponse> act)
+        public void Get(string url, Action<HttpListenerRequest, IServerResponse> act)
         {
               AddHandler(url, HttpVerb.Get, act);
         }
@@ -90,7 +90,7 @@ namespace SimpleHttpServer
         /// </summary>
         /// <param name="url">the full url to handle</param>
         /// <param name="act">callback to the handler</param>
-        public void Put(string url, Action<HttpListenerRequest, ServerResponse> act)
+        public void Put(string url, Action<HttpListenerRequest, IServerResponse> act)
         {
             AddHandler(url, HttpVerb.Put, act);
         }
@@ -100,7 +100,7 @@ namespace SimpleHttpServer
         /// </summary>
         /// <param name="url">the full url to handle</param>
         /// <param name="act">callback to the handler</param>
-        public void Post(string url, Action<HttpListenerRequest, ServerResponse> act)
+        public void Post(string url, Action<HttpListenerRequest, IServerResponse> act)
         {
             AddHandler(url, HttpVerb.Post, act);
         }
@@ -110,7 +110,7 @@ namespace SimpleHttpServer
         /// </summary>
         /// <param name="url">the full url to handle</param>
         /// <param name="act">callback to the handler</param>
-        public void Delete(string url, Action<HttpListenerRequest, ServerResponse> act)
+        public void Delete(string url, Action<HttpListenerRequest, IServerResponse> act)
         {
             AddHandler(url, HttpVerb.Delete, act);
         }
@@ -200,7 +200,7 @@ namespace SimpleHttpServer
         /// </summary>
         /// <param name="request"></param>
         /// <returns></returns>
-        private Dictionary<HttpVerb, Action<HttpListenerRequest, ServerResponse>> GetHandlers(HttpListenerRequest request)
+        private Dictionary<HttpVerb, Action<HttpListenerRequest, IServerResponse>> GetHandlers(HttpListenerRequest request)
         {
             var uri = request.Url.ToString();
             

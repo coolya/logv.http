@@ -24,13 +24,13 @@ namespace SimpleHttpServer
 {
     public static class ResponseExtensions
     {
-        public static ServerResponse WriteAsJson(this ServerResponse res, object obj)
+        public static IServerResponse WriteAsJson(this IServerResponse res, object obj)
         {
             res.Write(HtmlHelper.GetJson(obj));
             return res;
         }
 
-        public static void ServeFile(this ServerResponse res, string path)
+        public static void ServeFile(this IServerResponse res, string path)
         {
             if (!File.Exists(path))
                 throw new ArgumentException("File does not exist");
@@ -50,27 +50,27 @@ namespace SimpleHttpServer
             copier.Copy();
         }
 
-        public static ServerResponse Do503(this ServerResponse res, Exception ex)
+        public static IServerResponse Do503(this IServerResponse res, Exception ex)
         {
             res.StatusCode = 503;
             res.StatusDescription = ex.Message.Length < 513 ? ex.Message.Replace("\r\n", "") : string.Empty;
             return res;
         }
 
-        public static ServerResponse Do503(this ServerResponse res)
+        public static IServerResponse Do503(this IServerResponse res)
         {
             res.StatusCode = 503;
             return res;
         }
 
-        public static ServerResponse Write(this ServerResponse res, string data)
+        public static IServerResponse Write(this IServerResponse res, string data)
         {
             var bytez = Encoding.UTF8.GetBytes(data);
             res.OutputStream.Write(bytez, 0, bytez.Length);
             return res;
         }
 
-        public static ServerResponse GetCachedResponse(this ServerResponse res)
+        public static IServerResponse GetCachedResponse(this IServerResponse res)
         {
             return new CachedResponse(res);
         }

@@ -21,7 +21,7 @@ using System.IO;
 namespace SimpleHttpServer
 {
     [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1063:ImplementIDisposableCorrectly")]
-    public class ServerResponse : IDisposable
+    public class ServerResponse : IDisposable, SimpleHttpServer.IServerResponse
     {
         readonly HttpListenerResponse _res;
         readonly Stream _outputStream;
@@ -33,23 +33,23 @@ namespace SimpleHttpServer
             _outputStream = _res.OutputStream;
         }
 
-        public ServerResponse(ServerResponse res) : this(res.InnerResponse) {}
+        public ServerResponse(IServerResponse res) : this((res as ServerResponse).InnerResponse) { }
 
         #region ResponseWrapper
 
-        public ServerResponse Abort()
+        public IServerResponse Abort()
         { 
             _res.Abort();
             return this;
         }
 
-        public ServerResponse AddHeader(string name, string value)
+        public IServerResponse AddHeader(string name, string value)
         {
             _res.AddHeader(name, value);
             return this;
         }
 
-        public ServerResponse AddCookie(Cookie cookie)
+        public IServerResponse AddCookie(Cookie cookie)
         {
             _res.AppendCookie(cookie);
             return this;
@@ -119,7 +119,7 @@ namespace SimpleHttpServer
             set { _res.ProtocolVersion = value; }
         }
 
-        public ServerResponse Redirect(string url)
+        public IServerResponse Redirect(string url)
         {
             _res.Redirect(url);
             return this;
