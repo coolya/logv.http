@@ -23,13 +23,7 @@ namespace SimpleHttpServer
     [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1001:TypesThatOwnDisposableFieldsShouldBeDisposable")]
     public class Server 
     {
-        private enum HttpVerb
-        {
-            Get,
-            Post,
-            Put,
-            Delete
-        }
+
 
         private readonly HttpListener _listener;
         private readonly string _serverAdress;
@@ -116,6 +110,26 @@ namespace SimpleHttpServer
         }
 
         /// <summary>
+        /// Adds a listener for a patch request
+        /// </summary>
+        /// <param name="url">the full url to handle</param>
+        /// <param name="act">callback to the handler</param>
+        public void Patch(string url, Action<HttpListenerRequest, IServerResponse> act)
+        {
+            AddHandler(url, HttpVerb.Patch, act);
+        }
+
+        /// <summary>
+        /// Adds a listener for a head request
+        /// </summary>
+        /// <param name="url">the full url to handle</param>
+        /// <param name="act">callback to the handler</param>
+        public void Head(string url, Action<HttpListenerRequest, IServerResponse> act)
+        {
+            AddHandler(url, HttpVerb.Head, act);
+        }
+
+        /// <summary>
         /// handles an incomming request from the async call
         /// </summary>
         /// <param name="result"></param>
@@ -150,6 +164,12 @@ namespace SimpleHttpServer
                         break;
                     case "DELETE":
                         verb = HttpVerb.Delete;
+                        break;
+                    case "HEAD":
+                        verb = HttpVerb.Head;
+                        break;
+                    case "PATCH":
+                        verb = HttpVerb.Patch;
                         break;
                 }
 
