@@ -19,6 +19,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using Newtonsoft.Json;
+using System.Globalization;
 
 namespace SimpleHttpServer
 {
@@ -31,9 +32,41 @@ namespace SimpleHttpServer
 
         public static string GetJson(object obj)
         {
-            string result = null;
-                     result = JsonConvert.SerializeObject(obj);
-            return result;
+            //string result = null;
+            var converter = new JsonSerializer();
+
+            JsonSerializer jsonSerializer = JsonSerializer.Create(null);
+
+            StringBuilder sb = new StringBuilder(256);
+            StringWriter sw = new StringWriter(sb, CultureInfo.InvariantCulture);
+            using (JsonTextWriter jsonWriter = new JsonTextWriter(sw))
+            {
+                jsonWriter.Formatting = Formatting.None;
+
+                jsonSerializer.Serialize(jsonWriter, obj);
+            }
+
+            return sw.ToString();
+
+
+//            return result;
+        }
+
+        public static void WriteJson(IServerResponse res, object data)
+        {
+            var converter = new JsonSerializer();
+
+            JsonSerializer jsonSerializer = JsonSerializer.Create(null);
+
+            StringBuilder sb = new StringBuilder(256);
+
+            var sw = new StreamWriter(res.OutputStream, Encoding.UTF8);
+            using (JsonTextWriter jsonWriter = new JsonTextWriter(sw))
+            {
+                jsonWriter.Formatting = Formatting.None;
+
+                jsonSerializer.Serialize(jsonWriter, data);
+            }            
         }
 
         public static T GetObject<T>(string json)

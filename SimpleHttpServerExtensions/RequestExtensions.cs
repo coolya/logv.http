@@ -41,5 +41,25 @@ namespace SimpleHttpServer
             //todo check Content-Encoding an return the correct encoding
             return Encoding.UTF8;
         }
+
+        public static string DumpHeader(this HttpListenerRequest req)
+        {
+            return string.Format("->->->->-> REQUEST <-<-<-<-<-" + Environment.NewLine +
+                                   "->->->->-> Url: {0}" + Environment.NewLine +
+                                   "->->->->-> From: {1}" + Environment.NewLine +
+                                   "->->->->-> Method: {2}" + Environment.NewLine +
+                                   "->->->->-> Header: {3}", req.Url, req.RemoteEndPoint.Address, req.HttpMethod, req.Headers.ToString());
+        }
+
+        public static string Dump(this HttpListenerRequest req)
+        {
+            return string.Format("->->->->-> REQUEST <-<-<-<-<-" + Environment.NewLine +
+                                   "->->->->-> Url: {0}" + Environment.NewLine +
+                                   "->->->->-> From: {1}" + Environment.NewLine +
+                                   "->->->->-> Method: {2}" + Environment.NewLine +
+                                   "->->->->-> Header: {3}" + Environment.NewLine +
+                                   "->->->->-> Content: {4}"
+                                   , req.Url, req.RemoteEndPoint.Address, req.HttpMethod, req.Headers.ToString(), req.Content());
+        }
     }
 }

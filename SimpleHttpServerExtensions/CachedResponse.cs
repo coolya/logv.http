@@ -69,7 +69,9 @@ namespace SimpleHttpServer
             {
                 bufferStream.Close();
                 res.Close();
-            };            
+            };
+
+            copier.Copy();
         }
     }
 }

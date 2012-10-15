@@ -43,7 +43,7 @@ namespace SimpleHttpServer
         readonly Stream _input;
         readonly Stream _output;
 
-        byte[] buffer = new byte[4096];
+        byte[] buffer = new byte[65536];
 
         /// <summary>
         /// Raised when all data is copied
@@ -80,9 +80,17 @@ namespace SimpleHttpServer
                 return;
             }
 
-            _output.Write(buffer, 0, bytes);
+            try
+            {
+                _output.Write(buffer, 0, bytes);
 
-            GetData();
+                GetData();
+            }
+            catch (Exception)
+            {
+               //we swallow all since there is nothing we can do now
+                RaiseComplete();
+            }
         }
 
         void RaiseComplete()

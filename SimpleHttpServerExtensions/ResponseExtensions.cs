@@ -27,6 +27,7 @@ namespace SimpleHttpServer
         public static IServerResponse WriteAsJson(this IServerResponse res, object obj)
         {
             res.Write(HtmlHelper.GetJson(obj));
+            //HtmlHelper.WriteJson(res, obj);
             return res;
         }
 
