@@ -52,23 +52,6 @@ namespace SimpleHttpServer
 //            return result;
         }
 
-        public static void WriteJson(IServerResponse res, object data)
-        {
-            var converter = new JsonSerializer();
-
-            JsonSerializer jsonSerializer = JsonSerializer.Create(null);
-
-            StringBuilder sb = new StringBuilder(256);
-
-            var sw = new StreamWriter(res.OutputStream, Encoding.UTF8);
-            using (JsonTextWriter jsonWriter = new JsonTextWriter(sw))
-            {
-                jsonWriter.Formatting = Formatting.None;
-
-                jsonSerializer.Serialize(jsonWriter, data);
-            }            
-        }
-
         public static T GetObject<T>(string json)
         {
             return JsonConvert.DeserializeObject<T>(json);
