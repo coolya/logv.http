@@ -38,8 +38,59 @@ namespace SimpleHttpServer
 
         public static Encoding GetEncoding(this HttpListenerRequest req)
         {
-            //todo check Content-Encoding an return the correct encoding
+            //we only support UTF encoded bodies
             return Encoding.UTF8;
+        }
+
+        public static Encoding GetAcceptCharset(this HttpListenerRequest req)
+        {
+            var value = req.Headers.Get("Accept-Charset");
+            return GetEncodingFromHeader(value);
+        }
+
+        public static EncodingType GetAcceptEncoding(this HttpListenerRequest req)
+        {
+            EncodingType ret;
+            var value = req.Headers.Get("Accept-Encoding");
+
+            if (value.Contains("deflate"))
+                ret = EncodingType.Deflate;
+            else if(value.Contains("gzip"))
+                ret = EncodingType.Gzip;
+            else
+                ret = EncodingType.Plain;
+
+            return ret;
+        }
+
+        private static Encoding GetEncodingFromHeader(string value)
+        {
+            Encoding ret = null;
+            if(value.Contains("UTF-8"))
+            {
+                ret = Encoding.UTF8;
+            } else 
+            {
+                var splits = value.Split(',');
+
+                foreach (var item in splits)
+	            {
+                        try 
+	                    {	        
+		                    ret = Encoding.GetEncoding(splits[0]);
+                            continue;
+	                    }
+	                    catch (Exception)
+	                    {	
+		                
+	                    }
+	            }
+             
+                if(ret == null)
+                    ret = Encoding.UTF8;            
+            }
+
+            return ret;
         }
 
         public static string DumpHeader(this HttpListenerRequest req)
