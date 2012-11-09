@@ -45,20 +45,27 @@ namespace SimpleHttpServer
         public static Encoding GetAcceptCharset(this HttpListenerRequest req)
         {
             var value = req.Headers.Get("Accept-Charset");
+
+            if (string.IsNullOrEmpty(value))
+                return Encoding.UTF8;
+
             return GetEncodingFromHeader(value);
         }
 
         public static EncodingType GetAcceptEncoding(this HttpListenerRequest req)
         {
-            EncodingType ret;
+            EncodingType ret = EncodingType.Plain;
             var value = req.Headers.Get("Accept-Encoding");
 
+            if(!string.IsNullOrEmpty(value))
+            {
             if (value.Contains("deflate"))
                 ret = EncodingType.Deflate;
             else if(value.Contains("gzip"))
                 ret = EncodingType.Gzip;
             else
                 ret = EncodingType.Plain;
+            }
 
             return ret;
         }

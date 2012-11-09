@@ -28,15 +28,13 @@ namespace SimpleHttpServer
         public static IServerResponse WriteAsJson(this IServerResponse res, object obj)
         {
             res.Headers.Add("Content-Type", "application/json");
-            res.Write(HtmlHelper.GetJson(obj));
-            return res;
+            return res.Write(HtmlHelper.GetJson(obj));            
         }
 
         public static IServerResponse WriteAsJson(this IServerResponse res, object obj, Encoding charset, EncodingType encoding)
         {
             res.Headers.Add("Content-Type", "application/json");
-            res.Write(HtmlHelper.GetJson(obj), charset, encoding);
-            return res;
+            return res.Write(HtmlHelper.GetJson(obj), charset, encoding);            
         }
 
         public static void ServeFile(this IServerResponse res, string path)
@@ -79,8 +77,7 @@ namespace SimpleHttpServer
         public static IServerResponse Write(this IServerResponse res, string data, Encoding charset, EncodingType encoding)
         {
             var bytez = charset.GetBytes(data);
-            res.Write(encoding, bytez);
-            return res;
+            return res.Write(encoding, bytez);            
         }
 
         /// <summary>
@@ -407,20 +404,34 @@ namespace SimpleHttpServer
                 case EncodingType.Deflate:
                     {
                         res.Headers.Add("Content-Encoding", "deflate");
+
+                        if (!res.IsCached)
+                            res = res.GetCachedResponse();
+
                         var stream = new DeflateStream(res.OutputStream, CompressionMode.Compress);
+                        
                         stream.Write(data, 0, data.Length);
-                        stream.Close();
+                        stream.Flush();
                     }
                     break;
                 case EncodingType.Gzip:
                     {
                         res.Headers.Add("Content-Encoding", "gzip");
+
+                        if (!res.IsCached)
+                            res = res.GetCachedResponse();
+
                         var stream = new GZipStream(res.OutputStream, CompressionMode.Compress);
+                        
                         stream.Write(data, 0, data.Length);
-                        stream.Close();
+                        stream.Flush();
                     }
                     break;
                 case EncodingType.Plain:
+
+                    if (!res.IsCached)
+                        res.ContentLength64 = data.Length;
+
                     res.OutputStream.Write(data, 0, data.Length);
                     break;
             }
