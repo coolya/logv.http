@@ -239,25 +239,17 @@ namespace SimpleHttpServer
                 if (key.Length < lastBestMatch)
                     continue;
 
-                int k;
-                for (k = 1; k <= key.Length; k++)
-                {
-                    if(!uri.StartsWith(key.Substring(0, k)))
-                    {
-                        if (lastBestMatch < k)
-                        {
-                            lastBestMatch = k;
-                            lastMatchKey = key;
-                        }
-                        break;
-                    }
-                }
+                if (key.Length > uri.Length)
+                    continue;
 
-                if (k - 1 == key.Length && lastBestMatch < k)
+                if (uri.Substring(0, key.Length).Equals(key))
                 {
-                    lastBestMatch = k;
-                    lastMatchKey = key;
-                }
+                    if (key.Length > lastBestMatch)
+                    {
+                        lastBestMatch = key.Length;
+                        lastMatchKey = key;
+                    }
+                }               
             }
 
             if (lastBestMatch != -1)
