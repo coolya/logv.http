@@ -15,6 +15,7 @@
  */
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Net;
 using System.Text;
@@ -30,8 +31,8 @@ namespace SimpleHttpServer
             if (req.ContentLength64 > 0)
             {
                 var bytez = new byte[req.ContentLength64];
-                req.InputStream.Read(bytez, 0, (int)req.ContentLength64);
-                result = req.GetEncoding().GetString(bytez);
+                var reader = new StreamReader(req.InputStream);
+                result = reader.ReadToEnd();
             }
             return result;
         }
