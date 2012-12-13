@@ -343,5 +343,18 @@ namespace SimpleHttpTest
             var response = request.GetResponse();
         }
 
+        [TestMethod]
+        [Owner("Kolja Dummann")]
+        public void RootMatchTest()
+        {
+            _server.Get("http://localhost:13337/", (req, res) => res.Close());
+            _server.Start();
+            var rq = WebRequest.Create("http://localhost:13337/");
+            rq.GetResponse();
+
+            rq = WebRequest.Create("http://localhost:13337/index.html");
+            rq.GetResponse();
+        }
+
     }
 }
