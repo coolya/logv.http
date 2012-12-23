@@ -1,12 +1,7 @@
-﻿using SimpleHttpServer;
-using System;
-using System.Collections.Generic;
-using System.IO;
+﻿using System.IO;
 using System.IO.Compression;
-using System.Linq;
-using System.Text;
 
-namespace SimpleHttpServer
+namespace logv.http
 {
     public class DeflateResponse : CachedResponse
     {

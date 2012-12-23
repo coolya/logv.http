@@ -13,15 +13,13 @@
    See the License for the specific language governing permissions and
    limitations under the License.
  */
-using System;
-using System.Collections.Generic;
+
 using System.IO;
-using System.Linq;
 using System.Text;
 using Newtonsoft.Json;
 using System.Globalization;
 
-namespace SimpleHttpServer
+namespace logv.http
 {
     public static class HtmlHelper
     {

@@ -13,15 +13,14 @@
    See the License for the specific language governing permissions and
    limitations under the License.
  */
+
 using System;
-using System.Collections.Generic;
 using System.IO;
 using System.IO.Compression;
 using System.Linq;
 using System.Text;
-using SimpleHttpServer;
 
-namespace SimpleHttpServer
+namespace logv.http
 {
     public static class ResponseExtensions
     {
@@ -273,7 +272,7 @@ namespace SimpleHttpServer
         /// </summary>
         /// <param name="res">The response to the client</param>
         /// <param name="allowedVerbs">The allowed verbs.</param>
-        public static void Response405(this IServerResponse res, params SimpleHttpServer.HttpVerb[] allowedVerbs)
+        public static void Response405(this IServerResponse res, params HttpVerb[] allowedVerbs)
         {
             res.StatusCode = 405;
             var data = allowedVerbs.Aggregate("", (str, item) => str += item.ToString() + ",");

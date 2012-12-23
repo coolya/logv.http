@@ -16,21 +16,21 @@
 using System;
 using System.Net;
 using System.Text;
-using SimpleHttpServer;
 using System.Threading;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using logv.http;
 
 namespace SimpleHttpTest
 {
     [TestClass]
     public class ServerTests
     {
-        private SimpleHttpServer.Server _server;
+        private Server _server;
 
         [TestInitialize]
         public void Setup()
         {
-            _server = new SimpleHttpServer.Server("localhost", 13337);
+            _server = new Server("localhost", 13337);
         }
 
 

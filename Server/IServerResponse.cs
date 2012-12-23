@@ -1,5 +1,6 @@
 ﻿using System;
-namespace SimpleHttpServer
+
+namespace logv.http
 {
     public interface IServerResponse
     {

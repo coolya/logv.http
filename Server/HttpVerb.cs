@@ -1,10 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
-namespace SimpleHttpServer
+﻿namespace logv.http
 {
+    /// <summary>
+    /// Enum discri
+    /// </summary>
     public enum HttpVerb
     {
         Get,

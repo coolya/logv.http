@@ -13,15 +13,16 @@
    See the License for the specific language governing permissions and
    limitations under the License.
  */
+
 using System;
 using System.Text;
 using System.Net;
 using System.IO;
 
-namespace SimpleHttpServer
+namespace logv.http
 {
     [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1063:ImplementIDisposableCorrectly")]
-    public class ServerResponse : IDisposable, SimpleHttpServer.IServerResponse
+    public class ServerResponse : IDisposable, IServerResponse
     {
         readonly HttpListenerResponse _res;
         readonly Stream _outputStream;

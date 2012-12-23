@@ -8,8 +8,8 @@
     <ProjectGuid>{61FFE767-990C-45AD-BAFB-32C06115656B}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>SimpleHttpServer</RootNamespace>
-    <AssemblyName>SimpleHttpServer</AssemblyName>
+    <RootNamespace>logv.http</RootNamespace>
+    <AssemblyName>logv.http</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
@@ -29,7 +29,7 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <DocumentationFile>bin\Release\SimpleHttpServer.XML</DocumentationFile>
+    <DocumentationFile>bin\Release\logv.http.xml</DocumentationFile>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />

@@ -14,11 +14,12 @@
    See the License for the specific language governing permissions and
    limitations under the License.
  */
+
 using System;
 using System.Collections.Generic;
 using System.Net;
 
-namespace SimpleHttpServer
+namespace logv.http
 {
     [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1001:TypesThatOwnDisposableFieldsShouldBeDisposable")]
     public class Server 
