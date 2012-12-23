@@ -19,8 +19,17 @@ using System.Text;
 
 namespace logv.http
 {
+    /// <summary>
+    /// Helper Class with extension Methods for WebRequest
+    /// </summary>
     public static class WebRequestExtensions
     {
+        /// <summary>
+        /// Writes the specified req.
+        /// </summary>
+        /// <param name="req">The req.</param>
+        /// <param name="data">The data.</param>
+        /// <returns></returns>
         public static WebRequest Write(this WebRequest req, string data)
         {
             var bytez = req.GetEncoding().GetBytes(data);
@@ -28,6 +37,11 @@ namespace logv.http
             return req;
         }
 
+        /// <summary>
+        /// Gets the encoding.
+        /// </summary>
+        /// <param name="req">The req.</param>
+        /// <returns></returns>
         public static Encoding GetEncoding(this WebRequest req)
         {
             //todo read content-encoding an return the correct encoding

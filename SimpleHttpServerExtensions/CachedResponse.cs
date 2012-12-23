@@ -19,6 +19,9 @@ using System.IO;
 
 namespace logv.http
 {
+    /// <summary>
+    /// A response the caches the output stream into a MemoryStream and sends it to client async when it is closed 
+    /// </summary>
     public class CachedResponse : ServerResponse, IDisposable, IServerResponse
     {
         IServerResponse res;
@@ -31,6 +34,12 @@ namespace logv.http
             cached = true;
         }
 
+        /// <summary>
+        /// Gets the output stream.
+        /// </summary>
+        /// <value>
+        /// The output stream.
+        /// </value>
         public override System.IO.Stream OutputStream
         {
             get
@@ -39,6 +48,10 @@ namespace logv.http
             }
         }
 
+        /// <summary>
+        /// Property to directly set the Content-Length header
+        /// </summary>
+        /// <exception cref="System.InvalidOperationException">Content-Length will be set when the request is closed!</exception>
         public override long ContentLength64
         {
             get
@@ -51,11 +64,17 @@ namespace logv.http
             }
         }
 
+        /// <summary>
+        /// Closes the Response
+        /// </summary>
         public override void Close()
         {
             Commit();
         }
 
+        /// <summary>
+        /// Commits this instance.
+        /// </summary>
         void Commit()
         {
             res.ContentLength64 = bufferStream.Length;

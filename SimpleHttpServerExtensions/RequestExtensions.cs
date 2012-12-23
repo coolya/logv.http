@@ -21,8 +21,16 @@ using System.Text;
 
 namespace logv.http
 {
+    /// <summary>
+    /// Helper class with HttpListenerRequest Extension methods
+    /// </summary>
     public static class RequestExtensions
     {
+        /// <summary>
+        /// Reads the content the specified req.
+        /// </summary>
+        /// <param name="req">The req.</param>
+        /// <returns>The content as string</returns>
         public static string Content(this HttpListenerRequest req)
         {
             string result = string.Empty;
@@ -36,12 +44,22 @@ namespace logv.http
             return result;
         }
 
+        /// <summary>
+        /// Gets the encoding. Currently a placeholder that does only return UTF8
+        /// </summary>
+        /// <param name="req">The req.</param>
+        /// <returns></returns>
         public static Encoding GetEncoding(this HttpListenerRequest req)
         {
             //we only support UTF encoded bodies
             return Encoding.UTF8;
         }
 
+        /// <summary>
+        /// Gets the accept charset.
+        /// </summary>
+        /// <param name="req">The req.</param>
+        /// <returns></returns>
         public static Encoding GetAcceptCharset(this HttpListenerRequest req)
         {
             var value = req.Headers.Get("Accept-Charset");
@@ -52,6 +70,12 @@ namespace logv.http
             return GetEncodingFromHeader(value);
         }
 
+        /// <summary>
+        /// Gets a proxy Response according to the Accept-Encoding header
+        /// </summary>
+        /// <param name="req">The req.</param>
+        /// <param name="res">The res.</param>
+        /// <returns>A proxy request that compresses the payload</returns>
         public static IServerResponse GetCompressedResponse(this HttpListenerRequest req, IServerResponse res)
         {
             var enc = req.GetAcceptEncoding();
@@ -67,6 +91,11 @@ namespace logv.http
             }
         }
 
+        /// <summary>
+        /// Gets the accept encoding from the header
+        /// </summary>
+        /// <param name="req">The req.</param>
+        /// <returns></returns>
         public static EncodingType GetAcceptEncoding(this HttpListenerRequest req)
         {
             EncodingType ret = EncodingType.Plain;
@@ -116,6 +145,11 @@ namespace logv.http
             return ret;
         }
 
+        /// <summary>
+        /// Dumps the header.
+        /// </summary>
+        /// <param name="req">The req.</param>
+        /// <returns></returns>
         public static string DumpHeader(this HttpListenerRequest req)
         {
             return string.Format("->->->->-> REQUEST <-<-<-<-<-" + Environment.NewLine +
@@ -125,6 +159,11 @@ namespace logv.http
                                    "->->->->-> Header: {3}", req.Url, req.RemoteEndPoint.Address, req.HttpMethod, req.Headers.ToString());
         }
 
+        /// <summary>
+        /// Dumps the specified req.
+        /// </summary>
+        /// <param name="req">The req.</param>
+        /// <returns></returns>
         public static string Dump(this HttpListenerRequest req)
         {
             return string.Format("->->->->-> REQUEST <-<-<-<-<-" + Environment.NewLine +

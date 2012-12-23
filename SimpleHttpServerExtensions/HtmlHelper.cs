@@ -21,13 +21,26 @@ using System.Globalization;
 
 namespace logv.http
 {
+    /// <summary>
+    /// Helper class with html tools
+    /// </summary>
     public static class HtmlHelper
     {
+        /// <summary>
+        /// Packs the into HTML body.
+        /// </summary>
+        /// <param name="body">The body.</param>
+        /// <returns></returns>
         public static string PackIntoHtmlBody(string body)
         {
             return string.Format("<HTML><BODY>{0}</BODY></HTML>", body);
         }
 
+        /// <summary>
+        /// Gets the json.
+        /// </summary>
+        /// <param name="obj">The obj.</param>
+        /// <returns></returns>
         public static string GetJson(object obj)
         {
             //string result = null;
@@ -50,6 +63,12 @@ namespace logv.http
 //            return result;
         }
 
+        /// <summary>
+        /// Gets the object.
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="json">The json.</param>
+        /// <returns></returns>
         public static T GetObject<T>(string json)
         {
             return JsonConvert.DeserializeObject<T>(json);

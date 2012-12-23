@@ -21,6 +21,9 @@ using System.Net;
 
 namespace logv.http
 {
+    /// <summary>
+    /// The HTTP Server implementation
+    /// </summary>
     [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1001:TypesThatOwnDisposableFieldsShouldBeDisposable")]
     public class Server 
     {
@@ -37,7 +40,7 @@ namespace logv.http
         /// Creates a server instance
         /// </summary>
         /// <param name="root">listing root (ip or hostname or * for all requests)</param>
-        /// <param name="port"listening port></param>
+        /// <param name="port">listening port></param>
         public Server(string root, int port)
         {
             _listener = new  HttpListener();

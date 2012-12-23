@@ -19,14 +19,34 @@ using System.IO;
 
 namespace logv.http
 {
+    /// <summary>
+    /// 
+    /// </summary>
     public class AsynStreamCopyCompleteEventArgs : EventArgs
     {
         readonly Stream inputStream;
         readonly Stream outputStream;
 
+        /// <summary>
+        /// Gets the input stream.
+        /// </summary>
+        /// <value>
+        /// The input stream.
+        /// </value>
         public Stream InputStream { get { return inputStream; } }
+        /// <summary>
+        /// Gets the output stream.
+        /// </summary>
+        /// <value>
+        /// The output stream.
+        /// </value>
         public Stream OutputStream { get { return outputStream; } }
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="AsynStreamCopyCompleteEventArgs" /> class.
+        /// </summary>
+        /// <param name="input">The input.</param>
+        /// <param name="output">The output.</param>
         public AsynStreamCopyCompleteEventArgs(Stream input, Stream output)
         {
             inputStream = input;
@@ -48,6 +68,11 @@ namespace logv.http
         /// </summary>
         public event EventHandler<AsynStreamCopyCompleteEventArgs> Completed;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="AsyncStreamCopier" /> class.
+        /// </summary>
+        /// <param name="input">The input.</param>
+        /// <param name="output">The output.</param>
         public AsyncStreamCopier(Stream input, Stream output)
         {
             _input = input;
