@@ -444,5 +444,82 @@ namespace SimpleHttpServer
             return new CachedResponse(res);
         }
 
+        public static IServerResponse CachePublic(this IServerResponse res)
+        {
+            var header = res.Headers.Get("Cache-Control");
+
+            if (!string.IsNullOrEmpty(header))
+            {
+                header = "public, " + header;
+            }
+            else
+            {
+                header = "public";
+            }
+            res.Headers["Cache-Control"] = header;
+            
+
+            return res;
+        }
+
+        public static IServerResponse CachePrivate(this IServerResponse res)
+        {
+            var header = res.Headers.Get("Cache-Control");
+
+            if (!string.IsNullOrEmpty(header))
+            {
+                header = "private, " + header;
+            }
+            else
+            {
+                header = "private";
+            }
+            res.Headers["Cache-Control"] = header;
+
+            return res;
+        }
+
+        public static IServerResponse NoCache(this IServerResponse res)
+        {
+            var header = res.Headers.Get("Cache-Control");
+
+            if (!string.IsNullOrEmpty(header))
+            {
+                header = header + ", no-cache";
+            }
+            else
+            {
+                header = "no-cache";
+            }
+
+            res.Headers["Cache-Control"] = header;
+
+            return res;
+        }
+
+        public static IServerResponse MaxAge(this IServerResponse res, int seconds)
+        {
+            var header = res.Headers.Get("Cache-Control");
+
+            if (!string.IsNullOrEmpty(header))
+            {
+                header = header +  string.Format(", max-age={0}", seconds);
+            }
+            else
+            {
+                header =  string.Format("max-age={0}", seconds);
+            }
+            res.Headers["Cache-Control"] = header;
+
+            return res;
+        }
+
+        public static IServerResponse ETag(this IServerResponse res, string tag)
+        {
+            res.AddHeader("ETag", tag);
+
+            return res;
+        }
+
     }
 }
