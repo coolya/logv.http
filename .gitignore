@@ -4,3 +4,4 @@
 *.suo
 
 TestResults/*
+\packages
