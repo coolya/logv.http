@@ -45,6 +45,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AsyncStreamCopier.cs" />
+    <Compile Include="CacheFor.cs" />
     <Compile Include="CachedResponse.cs" />
     <Compile Include="DeflateResponse.cs" />
     <Compile Include="EncodingType.cs" />
