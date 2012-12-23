@@ -22,12 +22,12 @@ using SimpleHttpServer;
 
 namespace SimpleHttpServer
 {
-    sealed class CachedResponse : ServerResponse, IDisposable, IServerResponse
+    public class CachedResponse : ServerResponse, IDisposable, IServerResponse
     {
         IServerResponse res;
         MemoryStream bufferStream = new MemoryStream();
 
-        public CachedResponse(IServerResponse res)
+        internal CachedResponse(IServerResponse res)
             : base(res)
         {
             this.res = res;
@@ -67,6 +67,7 @@ namespace SimpleHttpServer
 
             copier.Completed += (s, e) =>
             {
+                bufferStream.Flush();
                 bufferStream.Close();
                 res.Close();
             };

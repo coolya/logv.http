@@ -8,13 +8,13 @@ using System.Text;
 
 namespace SimpleHttpServer
 {
-    public class DeflateResponse : ServerResponse
+    public class DeflateResponse : CachedResponse
     {
         private Stream deflateStream;
         public DeflateResponse(IServerResponse res) : base (res)
         {
             Headers.Add("Content-Encoding", "deflate");
-            deflateStream = new DeflateStream(base.OutputStream, CompressionMode.Compress);
+            deflateStream = new DeflateStream(base.OutputStream, CompressionMode.Compress, true);
         }
 
         public override Stream OutputStream

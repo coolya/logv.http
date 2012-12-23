@@ -35,6 +35,7 @@ namespace SimpleHttpServer
 
         public ServerResponse(IServerResponse res) : this((res as ServerResponse).InnerResponse) { }
 
+        
         #region ResponseWrapper
 
         public IServerResponse Abort()
@@ -159,7 +160,7 @@ namespace SimpleHttpServer
 
         public virtual void Close()
         {
-            _outputStream.Close();
+            _outputStream.Flush();            
             _res.Close();
         }
     }
