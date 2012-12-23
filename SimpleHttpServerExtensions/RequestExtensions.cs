@@ -53,6 +53,21 @@ namespace SimpleHttpServer
             return GetEncodingFromHeader(value);
         }
 
+        public static IServerResponse GetCompressedResponse(this HttpListenerRequest req, IServerResponse res)
+        {
+            var enc = req.GetAcceptEncoding();
+
+            switch(enc)
+            {
+                case EncodingType.Deflate:
+                    return new DeflateResponse(res);
+                case EncodingType.Gzip:
+                    return new GzipResponse(res);
+                default:
+                    return res;
+            }
+        }
+
         public static EncodingType GetAcceptEncoding(this HttpListenerRequest req)
         {
             EncodingType ret = EncodingType.Plain;
@@ -60,10 +75,11 @@ namespace SimpleHttpServer
 
             if(!string.IsNullOrEmpty(value))
             {
-            if (value.Contains("deflate"))
-                ret = EncodingType.Deflate;
-            else if(value.Contains("gzip"))
+
+            if(value.Contains("gzip"))
                 ret = EncodingType.Gzip;
+            else if (value.Contains("deflate"))
+                ret = EncodingType.Deflate;
             else
                 ret = EncodingType.Plain;
             }
@@ -82,17 +98,17 @@ namespace SimpleHttpServer
                 var splits = value.Split(',');
 
                 foreach (var item in splits)
-	            {
+                {
                         try 
-	                    {	        
-		                    ret = Encoding.GetEncoding(splits[0]);
+                        {	        
+                            ret = Encoding.GetEncoding(splits[0]);
                             continue;
-	                    }
-	                    catch (Exception)
-	                    {	
-		                
-	                    }
-	            }
+                        }
+                        catch (Exception)
+                        {	
+                        
+                        }
+                }
              
                 if(ret == null)
                     ret = Encoding.UTF8;            

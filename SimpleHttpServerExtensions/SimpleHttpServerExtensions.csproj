@@ -46,7 +46,9 @@
   <ItemGroup>
     <Compile Include="AsyncStreamCopier.cs" />
     <Compile Include="CachedResponse.cs" />
+    <Compile Include="DeflateResponse.cs" />
     <Compile Include="EncodingType.cs" />
+    <Compile Include="GzipResponse.cs" />
     <Compile Include="HtmlHelper.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RequestExtensions.cs" />

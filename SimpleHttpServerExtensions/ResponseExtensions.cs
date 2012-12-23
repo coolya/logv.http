@@ -302,7 +302,7 @@ namespace SimpleHttpServer
         /// actual HTTP servers.
         /// </summary>
         /// <param name="res">The response to the client</param>
-        public static void Reponse418(this IServerResponse res)
+        public static void Response418(this IServerResponse res)
         {
             res.StatusCode = 418;
             res.Close();
