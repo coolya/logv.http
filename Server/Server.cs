@@ -30,7 +30,7 @@ namespace logv.http
 
 
         private readonly HttpListener _listener;
-        private readonly string _serverAdress;
+        
 
         private readonly Dictionary<string,
             Dictionary<HttpVerb, Action<HttpListenerRequest, IServerResponse>>> _handlerByUrlAndVerb
@@ -44,8 +44,19 @@ namespace logv.http
         public Server(string root, int port)
         {
             _listener = new  HttpListener();
-            _serverAdress = string.Format("http://{0}:{1}/", root, port);
-            _listener.Prefixes.Add(_serverAdress);
+            var serverAdress = string.Format("http://{0}:{1}/", root, port);
+            _listener.Prefixes.Add(serverAdress);
+        }
+
+        /// <summary>
+        /// Adds aother address to server
+        /// </summary>
+        /// <param name="root">listing root (ip or hostname or * for all requests)</param>
+        /// <param name="port">listening port></param>
+        public void AddAddress(string root, int port)
+        {
+            var serverAdress = string.Format("http://{0}:{1}/", root, port);
+            _listener.Prefixes.Add(serverAdress);
         }
 
         /// <summary>

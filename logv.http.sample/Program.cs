@@ -25,9 +25,9 @@ namespace logv.http.sample
     {
         static void Main(string[] args)
         {
-            var server = new Server("localhost", 13337);
+            var server = new Server("[2001:470:1f15:5e3:11c4:492:eb77:f7ab]", 8080);
 
-            server.Get("http://localhost:13337" ,(req, res) => res.Write("Hello World!"));
+            server.Get("http://[2001:470:1f15:5e3:11c4:492:eb77:f7ab]:8080/", (req, res) => res.Write("Hello World!").Close());
 
             //to have json output uncomment the next line and comment out the previous one.
             //server.Get("http://localhost:13337" ,(req, res) => res.WriteAsJson(new {Hello = "world"}));
