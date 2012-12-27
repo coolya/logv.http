@@ -49,13 +49,24 @@ namespace logv.http
         }
 
         /// <summary>
-        /// Adds aother address to server
+        /// Adds another http address to server
         /// </summary>
         /// <param name="root">listing root (ip or hostname or * for all requests)</param>
         /// <param name="port">listening port></param>
         public void AddAddress(string root, int port)
         {
             var serverAdress = string.Format("http://{0}:{1}/", root, port);
+            _listener.Prefixes.Add(serverAdress);
+        }
+
+        /// <summary>
+        /// Adds another https address to server
+        /// </summary>
+        /// <param name="root">listing root (ip or hostname or * for all requests)</param>
+        /// <param name="port">listening port></param>
+        public void AddSecureAddress(string root, int port)
+        {
+            var serverAdress = string.Format("https://{0}:{1}/", root, port);
             _listener.Prefixes.Add(serverAdress);
         }
 
@@ -156,7 +167,8 @@ namespace logv.http
             _listener.BeginGetContext(new AsyncCallback(IncommingRequest), _listener);
             
             HttpListenerRequest request = context.Request;
-            HttpListenerResponse response = context.Response;            
+            HttpListenerResponse response = context.Response;    
+            
             
             string url = request.RawUrl.Substring(1, request.RawUrl.Length -1) ;
 
