@@ -18,6 +18,7 @@
 using System;
 using System.Collections.Generic;
 using System.Net;
+using System.Threading.Tasks;
 
 namespace logv.http
 {
@@ -164,78 +165,81 @@ namespace logv.http
             HttpListener listener = (HttpListener)result.AsyncState;
             var context = listener.EndGetContext(result);
 
+            Task.Factory.StartNew(() =>
+                                      {
+
+                                          HttpListenerRequest request = context.Request;
+                                          HttpListenerResponse response = context.Response;
+
+
+                                          var handlers = GetHandlers(request);
+
+                                          if (handlers != null)
+                                          {
+                                              HttpVerb verb = HttpVerb.Get;
+
+                                              switch (request.HttpMethod)
+                                              {
+                                                  case "GET":
+                                                      verb = HttpVerb.Get;
+                                                      break;
+                                                  case "POST":
+                                                      verb = HttpVerb.Post;
+                                                      break;
+                                                  case "PUT":
+                                                      verb = HttpVerb.Put;
+                                                      break;
+                                                  case "DELETE":
+                                                      verb = HttpVerb.Delete;
+                                                      break;
+                                                  case "HEAD":
+                                                      verb = HttpVerb.Head;
+                                                      break;
+                                                  case "PATCH":
+                                                      verb = HttpVerb.Patch;
+                                                      break;
+                                              }
+
+                                              if (handlers.ContainsKey(verb))
+                                              {
+                                                  try
+                                                  {
+                                                      handlers[verb](request, new ServerResponse(response));
+                                                  }
+                                                  catch (Exception ex)
+                                                  {
+                                                      response.StatusCode = 503;
+                                                      response.StatusDescription = "Server Error";
+
+                                                      if (request.IsLocal)
+                                                      {
+                                                          const string message =
+                                                              "Message {0} /r/nSource {1}/r/n Stacktrace {2}";
+
+                                                          var data = string.Format(message,
+                                                                                   ex.Message, ex.Source, ex.StackTrace);
+                                                      }
+
+                                                      response.Close();
+                                                  }
+
+                                              }
+                                              else
+                                              {
+                                                  response.StatusCode = 405;
+                                                  response.StatusDescription = "No handler for this HTTP method";
+                                                  response.Close();
+                                              }
+                                          }
+                                          else
+                                          {
+                                              response.StatusCode = 404;
+                                              response.StatusDescription = "Not Found";
+                                              response.Close();
+                                          }
+                                      });
+
             _listener.BeginGetContext(new AsyncCallback(IncommingRequest), _listener);
-            
-            HttpListenerRequest request = context.Request;
-            HttpListenerResponse response = context.Response;    
-            
-            
-            string url = request.RawUrl.Substring(1, request.RawUrl.Length -1) ;
-
-            var handlers = GetHandlers(request);
-
-            if (handlers != null)
-            {
-                HttpVerb verb = HttpVerb.Get;
-
-                switch (request.HttpMethod)
-                {
-                    case "GET":
-                        verb = HttpVerb.Get;
-                        break;
-                    case "POST":
-                        verb = HttpVerb.Post;
-                        break;
-                    case "PUT":
-                        verb = HttpVerb.Put;
-                        break;
-                    case "DELETE":
-                        verb = HttpVerb.Delete;
-                        break;
-                    case "HEAD":
-                        verb = HttpVerb.Head;
-                        break;
-                    case "PATCH":
-                        verb = HttpVerb.Patch;
-                        break;
-                }
-
-                if (handlers.ContainsKey(verb))
-                {
-                    try
-                    {
-                        handlers[verb](request, new ServerResponse(response));
-                    }
-                    catch (Exception ex)
-                    {
-                        response.StatusCode = 503;
-                        response.StatusDescription = "Server Error";
-
-                        if (request.IsLocal)
-                        {                            
-                                const string message = "Message {0} /r/nSource {1}/r/n Stacktrace {2}";
-
-                                var data = string.Format(message, 
-                                    ex.Message,ex.Source, ex.StackTrace);                                
-                        }
-
-                        response.Close();
-                    }
-
-                }
-                else
-                {
-                    response.StatusCode = 405;
-                    response.StatusDescription = "No handler for this HTTP method";
-                    response.Close();
-                }
-            }
-            else
-            {
-                response.StatusCode = 404;
-                response.StatusDescription = "Not Found";
-                response.Close();
-            }
         }
 
         /// <summary>

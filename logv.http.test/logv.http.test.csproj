@@ -50,13 +50,13 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\logv.http\logv.http.csproj">
-      <Project>{61ffe767-990c-45ad-bafb-32c06115656b}</Project>
-      <Name>logv.http</Name>
-    </ProjectReference>
     <ProjectReference Include="..\logv.http.extensions\logv.http.extensions.csproj">
       <Project>{88f1ca7c-ff06-46a3-9490-b59c2a5748a5}</Project>
       <Name>logv.http.extensions</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\logv.http\logv.http.csproj">
+      <Project>{61ffe767-990c-45ad-bafb-32c06115656b}</Project>
+      <Name>logv.http</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
