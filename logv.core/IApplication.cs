@@ -6,6 +6,7 @@ namespace logv.core
 {
     public interface IApplication
     {
+        void LoadPlugin(string name);
         IServiceLocator ServiceLocator { get; }
         ILog Log { get; }
         void Get(string uri, Action<HttpListenerRequest, IServerResponse> getAction);
