@@ -50,6 +50,16 @@ namespace logv.http
         }
 
         /// <summary>
+        /// Creates a server instance
+        /// </summary>
+        /// <param name="host">listening adress (like http://localhost:8080 or https://localhost:8080 </param>
+        public Server(string host)
+        {
+            _listener = new HttpListener();
+            _listener.Prefixes.Add(host);
+        }
+
+        /// <summary>
         /// Adds another http address to server
         /// </summary>
         /// <param name="root">listing root (ip or hostname or * for all requests)</param>
