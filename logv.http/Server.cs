@@ -71,6 +71,15 @@ namespace logv.http
         }
 
         /// <summary>
+        /// Adds another http address to server
+        /// </summary>
+        /// <param name="address"> </param>
+        public void AddAddress(string address)
+        {
+            _listener.Prefixes.Add(address);
+        }
+
+        /// <summary>
         /// Adds another https address to server
         /// </summary>
         /// <param name="root">listing root (ip or hostname or * for all requests)</param>
