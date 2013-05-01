@@ -42,6 +42,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ConsoleLog.cs" />
     <Compile Include="GenericCommandLineParser.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -53,6 +54,10 @@
     <ProjectReference Include="..\logv.core\logv.core.csproj">
       <Project>{6a993034-6bc2-4dff-81d2-fb6f6e4e93e7}</Project>
       <Name>logv.core</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\logv.http\logv.http.csproj">
+      <Project>{61ffe767-990c-45ad-bafb-32c06115656b}</Project>
+      <Name>logv.http</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
