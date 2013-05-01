@@ -1,13 +1,29 @@
-﻿using System;
+﻿
+/*
+     Copyright 2012 Kolja Dummann <k.dummann@gmail.com>
+
+   Licensed under the Apache License, Version 2.0 (the "License");
+   you may not use this file except in compliance with the License.
+   You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an "AS IS" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License.
+ */
+using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace logv.host
 {
-    static class GenericCommandLineParser
+    internal static class GenericCommandLineParser
     {
+        private static readonly Dictionary<string, Action<string>> Actions = new Dictionary<string, Action<string>>();
+        private static readonly Dictionary<string, Action> ActionsSimple = new Dictionary<string, Action>();
+
         public static void Parse(IEnumerable<string> parameters)
         {
             var enumerator = parameters.GetEnumerator();
@@ -16,24 +32,32 @@ namespace logv.host
             {
                 var current = enumerator.Current;
 
-                if (current.StartsWith("-"))
+                if (!current.StartsWith("-")) continue;
+                var key = current.Substring(1);
+
+                if (ActionsSimple.ContainsKey(key))
                 {
-                    
+                    ActionsSimple[key]();
+                }
+                else if (Actions.ContainsKey(key))
+                {
+                    if(enumerator.MoveNext())
+                    {
+                        Actions[key](enumerator.Current);
+                    }
                 }
             }
         }
+
+        public static void SetUp(string param, Action<string> setter)
+        {
+            Actions.Add(param, setter);
+        }
+
+
         public static void SetUp(string param, Action setter)
         {
-        }
-
-        public static void SetUp(string param, bool multiple, Action setter)
-        {
-            
-        }
-
-        public static void SetUp(Action setter)
-        {
-            
+            ActionsSimple.Add(param, setter);
         }
     }
 }
