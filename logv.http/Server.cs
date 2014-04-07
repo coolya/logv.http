@@ -258,6 +258,9 @@ namespace logv.http
             if (_handlerByUrlAndVerb.ContainsKey(uri))
                 return _handlerByUrlAndVerb[uri];
 
+            if (_handlerByUrlAndVerb.ContainsKey(request.Url.AbsolutePath))
+                return _handlerByUrlAndVerb[uri];
+
             //ok no 100% match, lets find the best handler
             var keys = _handlerByUrlAndVerb.Keys;
 
@@ -273,7 +276,7 @@ namespace logv.http
                 if (key.Length > uri.Length)
                     continue;
 
-                if (uri.Substring(0, key.Length).Equals(key))
+                if (uri.Substring(0, key.Length).Equals(key) || request.Url.AbsolutePath.Substring(0, key.Length).Equals(key))
                 {
                     if (key.Length > lastBestMatch)
                     {
