@@ -11,6 +11,8 @@
     <AssemblyName>logv.http.sample</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
+    <ProductVersion>12.0.0</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -21,6 +23,7 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <Externalconsole>true</Externalconsole>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -49,7 +52,7 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\logv.http.extensions\logv.http.extensions.csproj">
-      <Project>{88f1ca7c-ff06-46a3-9490-b59c2a5748a5}</Project>
+      <Project>{88F1CA7C-FF06-46A3-9490-B59C2A5748A5}</Project>
       <Name>logv.http.extensions</Name>
     </ProjectReference>
     <ProjectReference Include="..\logv.http\logv.http.csproj">
