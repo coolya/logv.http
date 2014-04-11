@@ -52,6 +52,9 @@
     <Compile Include="RequestExtensions.cs" />
     <Compile Include="ResponseExtensions.cs" />
     <Compile Include="WebRequestExtensions.cs" />
+    <Compile Include="RxExtensions.cs" />
+    <Compile Include="RequestObservable.cs" />
+    <Compile Include="GenericDisposable.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\logv.http\logv.http.csproj">

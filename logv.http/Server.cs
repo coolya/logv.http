@@ -26,10 +26,9 @@ namespace logv.http
     /// The HTTP Server implementation
     /// </summary>
     [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1001:TypesThatOwnDisposableFieldsShouldBeDisposable")]
-    public class Server 
+    public class Server
     {
-
-
+    
         private readonly HttpListener _listener;
         
 
@@ -105,7 +104,7 @@ namespace logv.http
         {
               AddHandler(url, HttpVerb.Get, act);
         }
-
+                
         /// <summary>
         /// Adds a listener for a put request
         /// </summary>
@@ -116,12 +115,12 @@ namespace logv.http
             AddHandler(url, HttpVerb.Put, act);
         }
 
-        /// <summary>
         /// Adds a listener for a post request
         /// </summary>
         /// <param name="url">the full url to handle</param>
         /// <param name="act">callback to the handler</param>
         public void Post(string url, Action<HttpListenerRequest, IServerResponse> act)
+        /// <summary>
         {
             AddHandler(url, HttpVerb.Post, act);
         }
@@ -139,7 +138,6 @@ namespace logv.http
         /// <summary>
         /// Adds a listener for a patch request
         /// </summary>
-        /// <param name="url">the full url to handle</param>
         /// <param name="act">callback to the handler</param>
         public void Patch(string url, Action<HttpListenerRequest, IServerResponse> act)
         {
@@ -153,9 +151,10 @@ namespace logv.http
         /// <param name="act">callback to the handler</param>
         public void Head(string url, Action<HttpListenerRequest, IServerResponse> act)
         {
+            /// <param name="url">the full url to handle</param>
             AddHandler(url, HttpVerb.Head, act);
         }
-
+            
         /// <summary>
         /// handles an incomming request from the async call
         /// </summary>
@@ -276,7 +275,8 @@ namespace logv.http
                 if (key.Length > uri.Length)
                     continue;
 
-                if (uri.Substring(0, key.Length).Equals(key) || request.Url.AbsolutePath.Substring(0, key.Length).Equals(key))
+                if (uri.Substring(0, key.Length).Equals(key) || 
+                    request.Url.AbsolutePath.Substring(0, key.Length).Equals(key))
                 {
                     if (key.Length > lastBestMatch)
                     {
