@@ -19,6 +19,7 @@ using System;
 using System.Collections.Generic;
 using System.Net;
 using System.Threading.Tasks;
+using System.Threading;
 
 namespace logv.http
 {
@@ -26,12 +27,14 @@ namespace logv.http
     /// The HTTP Server implementation
     /// </summary>
     [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1001:TypesThatOwnDisposableFieldsShouldBeDisposable")]
-    public class Server
+    public class Server : IObservable<Tuple<HttpListenerRequest, IServerResponse>>
     {
     
         private readonly HttpListener _listener;
-        
 
+        private readonly IList<IObserver<Tuple<HttpListenerRequest, IServerResponse>>> _observers = new List<IObserver<Tuple<HttpListenerRequest, IServerResponse>>>();
+        private readonly ReaderWriterLockSlim _lock = new ReaderWriterLockSlim();
+        
         private readonly Dictionary<string,
             Dictionary<HttpVerb, Action<HttpListenerRequest, IServerResponse>>> _handlerByUrlAndVerb
             = new Dictionary<string, Dictionary<HttpVerb, Action<HttpListenerRequest, IServerResponse>>>();
@@ -97,12 +100,62 @@ namespace logv.http
         /// <param name="act">callback to the handler</param>
         private void AddHandler(string url, HttpVerb verb, Action<HttpListenerRequest, IServerResponse> act)
         {
+            this.Subscribe(Observer.Create(() => { },
+                                           (Tuple<HttpListenerRequest, IServerResponse> tuple) =>
+                                               {
+                                                   if (IsMatch(tuple, url, verb))
+                                                       act(tuple.Item1, tuple.Item2);
+                                               }
+                                           , exception => { }));
+        }
 
-            if (!_handlerByUrlAndVerb.ContainsKey(url))
-                _handlerByUrlAndVerb.Add(url,
-                    new Dictionary<HttpVerb, Action<HttpListenerRequest, IServerResponse>>());
+        private static bool IsMatch(Tuple<HttpListenerRequest, IServerResponse> tuple, string url, HttpVerb verb)
+        {
+            if(GetVerb(tuple) == verb)
+            {
+                var uri = tuple.Item1.Url.ToString();
+                if (url.Equals(uri))
+                    return true;
 
-            _handlerByUrlAndVerb[url].Add(verb, act);
+                if (url.Equals(tuple.Item1.Url.AbsolutePath))
+                    return true;
+
+                if (uri.StartsWith(url))
+                    return true;
+
+                if (tuple.Item1.Url.AbsolutePath.StartsWith(url)) 
+                    return true;
+            }
+
+            return false;
+        }
+
+        private static HttpVerb GetVerb(Tuple<HttpListenerRequest, IServerResponse> tuple)
+        {
+            HttpVerb verb = HttpVerb.Get;
+
+            switch (tuple.Item1.HttpMethod)
+            {
+                case "GET":
+                    verb = HttpVerb.Get;
+                    break;
+                case "POST":
+                    verb = HttpVerb.Post;
+                    break;
+                case "PUT":
+                    verb = HttpVerb.Put;
+                    break;
+                case "DELETE":
+                    verb = HttpVerb.Delete;
+                    break;
+                case "HEAD":
+                    verb = HttpVerb.Head;
+                    break;
+                case "PATCH":
+                    verb = HttpVerb.Patch;
+                    break;
+            }
+            return verb;
         }
 
         /// <summary>
@@ -185,8 +238,20 @@ namespace logv.http
 
             Task.Factory.StartNew(() =>
                                       {
-
-                                          HttpListenerRequest request = context.Request;
+                                          _lock.EnterReadLock();
+                                          foreach (var observer in _observers)
+                                          {
+                                              try
+                                              {
+                                                  observer.OnNext(Tuple.Create(context.Request, (IServerResponse)new ServerResponse(context.Response)));
+                                              }
+                                              catch (Exception)
+                                              {
+                                                  
+                                              }
+                                          }
+                                          _lock.ExitReadLock();
+                                          /*HttpListenerRequest request = context.Request;
                                           HttpListenerResponse response = context.Response;
 
 
@@ -236,6 +301,7 @@ namespace logv.http
 
                                                           var data = string.Format(message,
                                                                                    ex.Message, ex.Source, ex.StackTrace);
+
                                                       }
 
                                                       response.Close();
@@ -254,7 +320,7 @@ namespace logv.http
                                               response.StatusCode = 404;
                                               response.StatusDescription = "Not Found";
                                               response.Close();
-                                          }
+                                          }*/
                                       });
 
             _listener.BeginGetContext(new AsyncCallback(IncommingRequest), _listener);
@@ -318,6 +384,21 @@ namespace logv.http
         {
             _listener.Stop();
             _listener.Close();
+        }
+
+        public IDisposable Subscribe(IObserver<Tuple<HttpListenerRequest, IServerResponse>> observer)
+        {
+            _lock.EnterWriteLock();
+            _observers.Add(observer);
+            _lock.ExitWriteLock();
+
+            return new Disposable(() =>
+                                      {
+                                          _lock.EnterWriteLock();
+                                          _observers.Remove(observer);
+                                          _lock.ExitWriteLock();
+                                      });
+
         }
     }
 }

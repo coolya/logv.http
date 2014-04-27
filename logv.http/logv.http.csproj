@@ -36,8 +36,11 @@
     <Reference Include="System.Core" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="DisposableT.cs" />
     <Compile Include="HttpVerb.cs" />
     <Compile Include="IServerResponse.cs" />
+    <Compile Include="Observer.cs" />
+    <Compile Include="ObserverT.cs" />
     <Compile Include="ServerResponse.cs" />
     <Compile Include="Server.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

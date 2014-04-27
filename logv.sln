@@ -9,6 +9,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "logv.http", "logv.http\logv
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "logv.http.extensions", "logv.http.extensions\logv.http.extensions.csproj", "{88F1CA7C-FF06-46A3-9490-B59C2A5748A5}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "logv.http.test", "logv.http.test\logv.http.test.csproj", "{BC278E5C-48CD-4641-939E-20184E2264DD}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -31,6 +33,10 @@ Global
 		{88F1CA7C-FF06-46A3-9490-B59C2A5748A5}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{88F1CA7C-FF06-46A3-9490-B59C2A5748A5}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{88F1CA7C-FF06-46A3-9490-B59C2A5748A5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BC278E5C-48CD-4641-939E-20184E2264DD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BC278E5C-48CD-4641-939E-20184E2264DD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BC278E5C-48CD-4641-939E-20184E2264DD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BC278E5C-48CD-4641-939E-20184E2264DD}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
